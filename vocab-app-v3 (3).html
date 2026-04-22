@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>词汇 Vocab</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --surface2: #22263a;
+  --border: #2e3348;
+  --accent: #5b8cff;
+  --accent2: #ff7eb3;
+  --green: #4ade80;
+  --red: #ff6b6b;
+  --amber: #ffb347;
+  --text: #eef0f8;
+  --text2: #9ba3bf;
+  --text3: #5c6480;
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; overflow-x: hidden; }
+.zh { font-family: 'Noto Sans SC', sans-serif; }
+
+/* ── NAV ── */
+#nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: stretch;
+  padding: 0 16px;
+  height: 54px;
+}
+.nav-logo { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; flex: 1; }
+.nav-logo span { color: var(--accent); }
+.nav-tab {
+  background: none; border: none; color: var(--text2);
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+  padding: 0 14px; cursor: pointer; transition: color 0.2s;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.nav-tab.active { color: var(--text); border-bottom-color: var(--accent); }
+.nav-tab:hover { color: var(--text); }
+#sync-btn {
+  background: none; border: 1px solid var(--border); color: var(--text2);
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
+  border-radius: 8px; padding: 0 12px; cursor: pointer; margin: 10px 0 10px 8px;
+  display: flex; align-items: center; gap: 6px; transition: all 0.2s;
+}
+#sync-btn:hover { border-color: var(--accent); color: var(--accent); }
+#sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text3); }
+#sync-dot.connected { background: var(--green); }
+
+/* ── SCREENS ── */
+.screen { display: none; padding: 24px 20px 60px; max-width: 780px; margin: 0 auto; }
+.screen.active { display: block; }
+
+/* ── CARDS ── */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+.card-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 14px; }
+
+/* ── PILLS ── */
+.pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill {
+  padding: 8px 16px; border-radius: 100px; border: 1.5px solid var(--border);
+  background: transparent; color: var(--text2); font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s;
+}
+.pill:hover { border-color: var(--accent); color: var(--text); }
+.pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.pill.topic-pill.active { background: var(--surface2); border-color: var(--accent); color: var(--accent); }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 13px 24px; border-radius: var(--radius-sm); border: none;
+  font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { filter: brightness(1.12); }
+.btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: var(--text2); }
+.btn-danger { background: var(--red); color: #fff; }
+.btn-sm { padding: 8px 14px; font-size: 13px; }
+.btn-full { width: 100%; }
+.btn-icon { padding: 8px; border-radius: 8px; background: var(--surface2); border: 1px solid var(--border); color: var(--text2); cursor: pointer; font-size: 15px; transition: all 0.15s; }
+.btn-icon:hover { color: var(--text); }
+
+/* ── INPUTS ── */
+input[type=text], input[type=number], textarea, select {
+  width: 100%; padding: 11px 14px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text);
+  background: var(--surface2); outline: none; transition: border-color 0.2s;
+}
+input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+textarea { resize: vertical; min-height: 68px; }
+.zh-input { font-family: 'Noto Sans SC', 'DM Sans', sans-serif; }
+label { font-size: 13px; font-weight: 500; color: var(--text2); display: block; margin-bottom: 6px; }
+.field { margin-bottom: 14px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ── HOME ── */
+#home-greeting { text-align: center; padding: 32px 0 20px; }
+#home-greeting h1 { font-size: 30px; font-weight: 600; margin-bottom: 6px; }
+#home-greeting p { color: var(--text2); font-size: 15px; }
+.stats-strip { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 24px; }
+.stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; text-align: center; }
+.stat-num { font-size: 32px; font-weight: 600; color: var(--accent); }
+.stat-lbl { font-size: 12px; color: var(--text3); margin-top: 4px; }
+.home-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.action-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 22px 18px; cursor: pointer; transition: border-color 0.2s;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.action-card:hover { border-color: var(--accent); }
+.action-icon { font-size: 28px; }
+.action-title { font-size: 16px; font-weight: 600; }
+.action-sub { font-size: 13px; color: var(--text2); }
+
+/* ── MATCH SETUP ── */
+.section-gap { margin-bottom: 20px; }
+.topic-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.all-topics-btn { margin-bottom: 10px; }
+
+/* ── MATCH GAME ── */
+#game-screen { min-height: calc(100dvh - 54px); display: none; flex-direction: column; }
+#game-screen.active { display: flex; }
+#game-header {
+  padding: 14px 20px; display: flex; align-items: center; gap: 14px;
+  border-bottom: 1px solid var(--border); background: var(--surface);
+}
+#game-progress-bar-wrap { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+#game-progress-bar { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.4s ease; }
+#game-counter { font-size: 13px; color: var(--text2); white-space: nowrap; }
+#game-score { font-size: 13px; font-weight: 600; color: var(--accent); white-space: nowrap; }
+#quit-btn { background: none; border: none; color: var(--text3); font-size: 20px; cursor: pointer; padding: 4px; }
+#quit-btn:hover { color: var(--red); }
+
+#game-body {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 28px 20px 20px; max-width: 600px; margin: 0 auto; width: 100%;
+}
+
+/* difficulty badge */
+#difficulty-badge {
+  font-size: 12px; color: var(--text3); margin-bottom: 20px;
+  display: flex; align-items: center; gap: 6px;
+}
+.diff-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text3); transition: background 0.3s; }
+.diff-dot.lit { background: var(--accent); }
+
+/* question word */
+#question-mode-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 12px; text-align: center; }
+#question-word {
+  font-size: clamp(24px, 5vw, 38px); font-weight: 600; text-align: center;
+  line-height: 1.3; margin-bottom: 10px; padding: 0 10px;
+}
+#question-word.zh { font-family: 'Noto Sans SC', sans-serif; }
+#question-hint { font-size: 14px; color: var(--text2); text-align: center; margin-bottom: 32px; min-height: 22px; }
+
+/* options */
+#options-grid { width: 100%; display: grid; gap: 12px; }
+.option-btn {
+  width: 100%; padding: 16px 20px; border-radius: var(--radius);
+  border: 2px solid var(--border); background: var(--surface);
+  color: var(--text); font-family: 'DM Sans', sans-serif;
+  font-size: clamp(15px, 3vw, 17px); font-weight: 500; cursor: pointer;
+  transition: all 0.15s; text-align: center; line-height: 1.4;
+  min-height: 60px; display: flex; align-items: center; justify-content: center;
+}
+.option-btn:hover:not(:disabled) { border-color: var(--accent); background: var(--surface2); }
+.option-btn.correct { border-color: var(--green); background: rgba(74,222,128,0.12); color: var(--green); }
+.option-btn.wrong { border-color: var(--red); background: rgba(255,107,107,0.12); color: var(--red); animation: shake 0.35s; }
+.option-btn.reveal { border-color: var(--green); background: rgba(74,222,128,0.08); color: var(--green); }
+.option-btn:disabled { cursor: default; }
+.option-btn.zh-opt { font-family: 'Noto Sans SC', sans-serif; }
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); }
+}
+
+/* result screen */
+#result-screen {
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  min-height: calc(100dvh - 54px); padding: 40px 20px; text-align: center;
+}
+#result-screen.active { display: flex; }
+.result-emoji { font-size: 56px; margin-bottom: 20px; }
+.result-title { font-size: 26px; font-weight: 600; margin-bottom: 8px; }
+.result-score-big { font-size: 52px; font-weight: 600; color: var(--accent); margin: 16px 0; }
+.result-msg { color: var(--text2); font-size: 16px; margin-bottom: 12px; }
+.result-diff { font-size: 13px; color: var(--text3); margin-bottom: 32px; }
+.result-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+/* ── STUDY ── */
+#study-search { margin-bottom: 12px; }
+.topic-filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.topic-filter-pill {
+  padding: 6px 14px; border-radius: 100px; border: 1.5px solid var(--border);
+  background: transparent; color: var(--text2); font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s;
+}
+.topic-filter-pill.active { border-color: var(--accent); color: var(--accent); background: rgba(91,140,255,0.1); }
+
+.word-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px 18px; margin-bottom: 10px; cursor: pointer; transition: border-color 0.15s;
+}
+.word-card:hover { border-color: var(--text3); }
+.word-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.word-card-en { font-size: 16px; font-weight: 600; }
+.word-card-zh { font-size: 15px; color: var(--accent); font-family: 'Noto Sans SC', sans-serif; margin-top: 2px; }
+.word-card-topic { font-size: 11px; padding: 3px 10px; border-radius: 100px; background: var(--surface2); color: var(--text3); white-space: nowrap; flex-shrink: 0; }
+.word-defs { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.word-defs.open { display: block; }
+.def-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.7px; color: var(--text3); margin-bottom: 4px; margin-top: 10px; }
+.def-label:first-child { margin-top: 0; }
+.def-text { font-size: 14px; color: var(--text2); line-height: 1.6; }
+.acc-chip { font-size: 11px; padding: 3px 10px; border-radius: 100px; white-space: nowrap; }
+.acc-good { background: rgba(74,222,128,0.15); color: var(--green); }
+.acc-mid { background: rgba(255,179,71,0.15); color: var(--amber); }
+.acc-low { background: rgba(255,107,107,0.15); color: var(--red); }
+.acc-none { background: var(--surface2); color: var(--text3); }
+
+/* ── WORDS (TEACHER) ── */
+#add-word-form { margin-bottom: 20px; }
+.topic-input-row { display: flex; gap: 8px; align-items: flex-end; }
+.topic-input-row input { flex: 1; }
+.word-row {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 14px 16px; display: flex; align-items: center; gap: 12px; margin-bottom: 8px;
+}
+.word-row-info { flex: 1; min-width: 0; }
+.word-row-en { font-size: 15px; font-weight: 500; }
+.word-row-zh { font-size: 14px; color: var(--accent); font-family: 'Noto Sans SC', sans-serif; }
+.word-row-topic { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.word-row-acc { font-size: 12px; color: var(--text3); }
+.delete-btn { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 18px; padding: 4px; transition: color 0.15s; }
+.delete-btn:hover { color: var(--red); }
+
+/* ── STATS ── */
+.overview-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
+.ov-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; text-align: center; }
+.ov-num { font-size: 30px; font-weight: 600; color: var(--accent); }
+.ov-lbl { font-size: 12px; color: var(--text3); margin-top: 4px; }
+.stat-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border); }
+.stat-row:last-child { border-bottom: none; }
+.stat-word { font-size: 14px; font-weight: 500; width: 130px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stat-topic-tag { font-size: 11px; color: var(--text3); }
+.stat-bar-wrap { flex: 1; height: 7px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.stat-bar { height: 100%; border-radius: 3px; transition: width 0.6s; }
+.stat-pct { font-size: 13px; font-weight: 600; width: 36px; text-align: right; flex-shrink: 0; }
+.stat-tries { font-size: 12px; color: var(--text3); width: 54px; text-align: right; flex-shrink: 0; }
+
+/* ── MODAL ── */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 300; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; max-width: 380px; width: 90%; }
+.modal-box h3 { font-size: 18px; margin-bottom: 10px; }
+.modal-box p { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 20px; }
+.modal-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ── TOAST ── */
+#toast {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px);
+  background: var(--surface); border: 1px solid var(--border); color: var(--text);
+  padding: 10px 22px; border-radius: 100px; font-size: 14px;
+  opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 500; white-space: nowrap;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── EMPTY ── */
+.empty { text-align: center; padding: 50px 20px; color: var(--text3); }
+.empty-icon { font-size: 38px; margin-bottom: 12px; }
+.empty h3 { font-size: 17px; color: var(--text2); margin-bottom: 8px; }
+.empty p { font-size: 14px; line-height: 1.6; }
+
+
+/* ── SETS ── */
+.set-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 18px 20px; margin-bottom: 12px;
+}
+.set-card-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.set-card-name { font-size: 17px; font-weight: 600; }
+.set-card-count { font-size: 13px; color: var(--text3); }
+.set-card-words { display: flex; flex-wrap: wrap; gap: 6px; }
+.set-word-chip {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 6px; padding: 4px 10px; font-size: 13px; color: var(--text2);
+}
+.set-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+/* Set builder modal */
+#set-modal { padding: 0; }
+.set-modal-inner {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  width: min(700px, 95vw); max-height: 90vh; display: flex; flex-direction: column;
+}
+.set-modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); }
+.set-modal-header h3 { font-size: 18px; margin-bottom: 12px; }
+.set-modal-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
+.set-modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+.word-picker-row {
+  display: flex; align-items: center; gap: 12px; padding: 10px 0;
+  border-bottom: 1px solid var(--border); cursor: pointer;
+}
+.word-picker-row:last-child { border-bottom: none; }
+.word-picker-check {
+  width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--border);
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; background: transparent;
+}
+.word-picker-row.selected .word-picker-check { background: var(--accent); border-color: var(--accent); }
+.word-picker-row.selected .word-picker-check::after { content: '✓'; color: #fff; font-size: 13px; font-weight: 600; }
+.word-picker-info { flex: 1; min-width: 0; }
+.word-picker-en { font-size: 15px; font-weight: 500; }
+.word-picker-zh { font-size: 13px; color: var(--accent); font-family: 'Noto Sans SC', sans-serif; }
+.word-picker-topic { font-size: 11px; color: var(--text3); }
+.picker-search-row { display: flex; gap: 10px; margin-bottom: 14px; }
+.picker-search-row input { flex: 1; }
+.selected-count { font-size: 13px; color: var(--text2); margin-top: 10px; }
+
+/* Match setup mode toggle */
+.setup-mode-row { display: flex; gap: 8px; margin-bottom: 16px; }
+.setup-mode-btn {
+  flex: 1; padding: 10px; border-radius: var(--radius-sm); border: 1.5px solid var(--border);
+  background: transparent; color: var(--text2); font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; text-align: center;
+}
+.setup-mode-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(91,140,255,0.08); }
+.set-select-grid { display: grid; gap: 10px; }
+.set-select-card {
+  background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius);
+  padding: 14px 16px; cursor: pointer; transition: all 0.15s;
+}
+.set-select-card:hover { border-color: var(--text3); }
+.set-select-card.active { border-color: var(--accent); background: rgba(91,140,255,0.06); }
+.set-select-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.set-select-meta { font-size: 13px; color: var(--text3); }
+
+
+/* ── REFERENCE PANEL ── */
+#ref-panel {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+  background: var(--surface); border-top: 1px solid var(--border);
+  border-radius: 20px 20px 0 0;
+  transform: translateY(100%); transition: transform 0.3s ease;
+  max-height: 65vh; display: flex; flex-direction: column;
+}
+#ref-panel.open { transform: translateY(0); }
+#ref-panel-header {
+  padding: 14px 20px 10px; display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+#ref-panel-header h4 { font-size: 15px; font-weight: 600; }
+#ref-panel-close { background: none; border: none; color: var(--text2); font-size: 20px; cursor: pointer; padding: 2px 6px; }
+#ref-panel-body { overflow-y: auto; padding: 12px 20px 24px; }
+.ref-row {
+  display: flex; gap: 12px; padding: 10px 0;
+  border-bottom: 1px solid var(--border); align-items: flex-start;
+}
+.ref-row:last-child { border-bottom: none; }
+.ref-row-en { font-size: 14px; font-weight: 600; flex: 1; }
+.ref-row-zh { font-size: 14px; color: var(--accent); font-family: 'Noto Sans SC', sans-serif; flex: 1; }
+.ref-row-def { font-size: 12px; color: var(--text3); margin-top: 2px; line-height: 1.5; }
+#ref-btn {
+  position: fixed; bottom: 20px; right: 20px; z-index: 150;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text2); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+  border-radius: 100px; padding: 10px 18px; cursor: pointer;
+  display: none; align-items: center; gap: 7px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3); transition: all 0.2s;
+}
+#ref-btn:hover { border-color: var(--accent); color: var(--accent); }
+#ref-btn.visible { display: flex; }
+#ref-overlay {
+  display: none; position: fixed; inset: 0; z-index: 190; background: rgba(0,0,0,0.4);
+}
+#ref-overlay.open { display: block; }
+
+/* ── BOOK MODE TOGGLE ── */
+.book-mode-row { display: flex; gap: 8px; margin-top: 14px; }
+.book-btn {
+  flex: 1; padding: 10px; border-radius: var(--radius-sm); border: 1.5px solid var(--border);
+  background: transparent; color: var(--text2); font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; text-align: center;
+}
+.book-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(91,140,255,0.08); }
+
+/* ── STATS EXTRAS ── */
+.stats-actions { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.ref-stat-section { margin-top: 20px; }
+.ref-stat-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+.ref-stat-row:last-child { border-bottom: none; }
+.ref-stat-word { font-size: 14px; font-weight: 500; flex: 1; }
+.ref-stat-count { font-size: 13px; color: var(--amber); font-weight: 600; white-space: nowrap; }
+.ref-stat-label { font-size: 11px; color: var(--text3); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 480px) {
+  .field-row { grid-template-columns: 1fr; }
+  .home-actions { grid-template-columns: 1fr; }
+  .overview-grid { gap: 8px; }
+  .ov-num { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="nav-logo">词汇 <span>Vocab</span></div>
+  <button class="nav-tab active" onclick="showTab('home',this)">Home</button>
+  <button class="nav-tab" onclick="showTab('study',this)">Study</button>
+  <button class="nav-tab" onclick="showTab('words',this)">Words</button>
+  <button class="nav-tab" onclick="showTab('stats',this)">Stats</button>
+  <button class="nav-tab" onclick="showTab('sets',this)">Sets</button>
+  <button id="sync-btn" onclick="openSyncModal()">
+    <div id="sync-dot"></div>
+    <span id="sync-label">Sync</span>
+  </button>
+</nav>
+
+<!-- ══ HOME ══ -->
+<div id="screen-home" class="screen active">
+  <div id="home-greeting">
+    <h1>你好！ Hello!</h1>
+    <p>Ready to practise your vocabulary?</p>
+  </div>
+  <div class="stats-strip">
+    <div class="stat-box"><div class="stat-num" id="hw-count">0</div><div class="stat-lbl">Words</div></div>
+    <div class="stat-box"><div class="stat-num" id="hw-rounds">0</div><div class="stat-lbl">Rounds</div></div>
+    <div class="stat-box"><div class="stat-num" id="hw-acc">—</div><div class="stat-lbl">Accuracy</div></div>
+  </div>
+  <div class="home-actions">
+    <div class="action-card" onclick="showTab('match-setup', null)">
+      <div class="action-icon">🎯</div>
+      <div class="action-title">Start matching</div>
+      <div class="action-sub">Choose topics and play</div>
+    </div>
+    <div class="action-card" onclick="startReview()">
+      <div class="action-icon">🔁</div>
+      <div class="action-title">Review weak words</div>
+      <div class="action-sub">Focus on low accuracy</div>
+    </div>
+    <div class="action-card" onclick="showTab('study', null)">
+      <div class="action-icon">📖</div>
+      <div class="action-title">Browse words</div>
+      <div class="action-sub">Study at your own pace</div>
+    </div>
+    <div class="action-card" onclick="showTab('stats', null)">
+      <div class="action-icon">📊</div>
+      <div class="action-title">View progress</div>
+      <div class="action-sub">See your accuracy stats</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MATCH SETUP ══ -->
+<div id="screen-match-setup" class="screen" style="display:none">
+  <div class="card section-gap">
+    <div class="card-title">Play by</div>
+    <div class="setup-mode-row">
+      <button class="setup-mode-btn active" id="setup-by-topic-btn" onclick="setSetupMode('topic')">📚 Topics</button>
+      <button class="setup-mode-btn" id="setup-by-set-btn" onclick="setSetupMode('set')">🗂 Lesson set</button>
+    </div>
+    <div id="setup-topic-section">
+      <div class="card-title" style="margin-bottom:10px">Topics to include</div>
+      <div id="topic-select-pills" class="topic-grid"></div>
+      <div style="margin-top:12px; font-size:13px; color:var(--text3)" id="topic-word-count"></div>
+    </div>
+    <div id="setup-set-section" style="display:none">
+      <div class="card-title" style="margin-bottom:10px">Choose a set</div>
+      <div class="set-select-grid" id="set-select-grid"></div>
+      <div style="margin-top:10px; font-size:13px; color:var(--text3)" id="set-word-count"></div>
+    </div>
+  </div>
+  <div class="card section-gap">
+    <div class="card-title">Match mode</div>
+    <div class="pills" id="mode-pills">
+      <button class="pill active" data-mode="en-zh">English → Chinese</button>
+      <button class="pill" data-mode="zh-en">Chinese → English</button>
+      <button class="pill" data-mode="term-def">Term → Definition</button>
+    </div>
+  </div>
+  <div class="card section-gap">
+    <div class="card-title">Words per round</div>
+    <div style="display:flex; align-items:center; gap:14px">
+      <input type="range" id="round-slider" min="3" max="20" value="10" style="flex:1; accent-color:var(--accent)" oninput="updateSlider()">
+      <span id="slider-val" style="font-size:16px; font-weight:600; width:28px">10</span>
+    </div>
+  </div>
+  <div class="card section-gap">
+    <div class="card-title">Reference mode</div>
+    <div class="book-mode-row">
+      <button class="book-btn active" id="open-book-btn" onclick="setBookMode('open')">📖 Open book</button>
+      <button class="book-btn" id="closed-book-btn" onclick="setBookMode('closed')">🔒 Closed book</button>
+    </div>
+    <div style="margin-top:10px; font-size:13px; color:var(--text3)" id="book-mode-desc">She can open a reference list of the current round's words at any time.</div>
+  </div>
+  <button class="btn btn-primary btn-full" onclick="startGame()" style="margin-top:4px">Start round →</button>
+</div>
+
+<!-- ══ GAME ══ -->
+<div id="game-screen">
+  <div id="game-header">
+    <button id="quit-btn" onclick="quitGame()" title="Quit">✕</button>
+    <div id="game-progress-bar-wrap"><div id="game-progress-bar" style="width:0%"></div></div>
+    <div id="game-counter">0 / 0</div>
+    <div id="game-score">0✓</div>
+  </div>
+  <div id="game-body">
+    <div id="difficulty-badge"></div>
+    <div id="question-mode-label"></div>
+    <div id="question-word"></div>
+    <div id="question-hint"></div>
+    <div id="options-grid"></div>
+  </div>
+</div>
+
+<div id="ref-overlay" onclick="closeRefPanel()"></div>
+<button id="ref-btn" onclick="openRefPanel()">
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5zm8 0A1.5 1.5 0 0 1 10.5 9h3A1.5 1.5 0 0 1 15 10.5v3A1.5 1.5 0 0 1 13.5 15h-3A1.5 1.5 0 0 1 9 13.5z"/></svg>
+  Word list
+</button>
+<div id="ref-panel">
+  <div id="ref-panel-header">
+    <h4>Round word list</h4>
+    <button id="ref-panel-close" onclick="closeRefPanel()">✕</button>
+  </div>
+  <div id="ref-panel-body"></div>
+</div>
+
+<!-- ══ RESULT ══ -->
+<div id="result-screen">
+  <div class="result-emoji" id="result-emoji">🎉</div>
+  <div class="result-title">Round complete!</div>
+  <div class="result-score-big" id="result-score">—</div>
+  <div class="result-msg" id="result-msg"></div>
+  <div class="result-diff" id="result-diff"></div>
+  <div class="result-btns">
+    <button class="btn btn-primary" onclick="startGame()">Play again</button>
+    <button class="btn btn-secondary" onclick="showTab('match-setup', null)">Change settings</button>
+    <button class="btn btn-secondary" onclick="showTab('home', null)">Home</button>
+  </div>
+</div>
+
+<!-- ══ STUDY ══ -->
+<div id="screen-study" class="screen" style="display:none">
+  <div id="study-search"><input type="text" id="study-q" placeholder="Search… 搜索…" oninput="renderStudy()"></div>
+  <div class="topic-filter-row" id="study-topic-filters"></div>
+  <div id="study-list"></div>
+</div>
+
+<!-- ══ WORDS ══ -->
+<div id="screen-words" class="screen" style="display:none">
+  <div class="card" id="add-word-form">
+    <div class="card-title" id="form-heading">Add new word</div>
+    <div class="field-row">
+      <div class="field"><label>English term</label><input type="text" id="f-en" placeholder="e.g. mean"></div>
+      <div class="field"><label>Chinese translation</label><input type="text" id="f-zh" class="zh-input" placeholder="e.g. 平均数"></div>
+    </div>
+    <div class="field"><label>English definition</label><textarea id="f-def-en" placeholder="e.g. The sum of all values divided by the number of values."></textarea></div>
+    <div class="field"><label>Chinese definition</label><textarea id="f-def-zh" class="zh-input" placeholder="e.g. 所有数值之和除以数值的个数。"></textarea></div>
+    <div class="field">
+      <label>Topic <span style="font-weight:400;color:var(--text3)">(separate multiple with commas)</span></label>
+      <div class="topic-input-row">
+        <input type="text" id="f-topic" placeholder="e.g. General Mathematics, Algebra" list="topic-datalist">
+        <datalist id="topic-datalist"></datalist>
+      </div>
+    </div>
+    <div style="display:flex; gap:10px; margin-top:4px">
+      <button class="btn btn-primary btn-sm" onclick="saveWord()" id="save-btn">Add word</button>
+      <button class="btn btn-secondary btn-sm" onclick="cancelEdit()" id="cancel-btn" style="display:none">Cancel</button>
+    </div>
+  </div>
+  <div id="bank-topic-filter" class="topic-filter-row" style="margin-bottom:12px"></div>
+  <div id="word-list"></div>
+</div>
+
+<!-- ══ STATS ══ -->
+<div id="screen-stats" class="screen" style="display:none">
+  <div class="overview-grid" id="stats-overview"></div>
+  <div class="card">
+    <div class="card-title">Per-word accuracy</div>
+    <div id="stats-list"></div>
+  </div>
+</div>
+
+
+<!-- ══ SETS ══ -->
+<div id="screen-sets" class="screen" style="display:none">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px">
+    <div>
+      <div style="font-size:20px; font-weight:600">Lesson sets</div>
+      <div style="font-size:13px; color:var(--text3); margin-top:3px">Group words for specific lessons</div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="openSetModal(null)">+ New set</button>
+  </div>
+  <div id="sets-list"></div>
+</div>
+
+<!-- ══ SET BUILDER MODAL ══ -->
+<div class="modal-overlay" id="set-modal">
+  <div class="set-modal-inner">
+    <div class="set-modal-header">
+      <h3 id="set-modal-title">New lesson set</h3>
+      <div class="field">
+        <label>Set name</label>
+        <input type="text" id="set-name-input" placeholder="e.g. Week 3 — Data Types">
+      </div>
+      <div class="picker-search-row">
+        <input type="text" id="picker-search" placeholder="Search words…" oninput="renderPicker()">
+        <select id="picker-topic-filter" onchange="renderPicker()" style="width:auto; flex-shrink:0">
+          <option value="all">All topics</option>
+        </select>
+      </div>
+      <div class="selected-count" id="picker-selected-count">0 words selected</div>
+    </div>
+    <div class="set-modal-body">
+      <div id="word-picker-list"></div>
+    </div>
+    <div class="set-modal-footer">
+      <button class="btn btn-secondary btn-sm" onclick="closeSetModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="saveSet()">Save set</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SYNC MODAL ══ -->
+<div class="modal-overlay" id="sync-modal">
+  <div class="modal-box">
+    <h3>Google Drive sync</h3>
+    <p id="sync-modal-msg">Sign in once to sync your word bank and progress across devices. Your student will never see this.</p>
+    <div class="modal-btns" id="sync-modal-btns"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════
+// DATA
+// ══════════════════════════════════════
+let db = {
+  words: [],      // {id, enTerm, zhTerm, enDef, zhDef, topics:[]}
+  accuracy: {},   // {id: {attempts, correct}}
+  refLookups: {},  // {id: {count, words:[]}} — secret stat
+  sets: [],       // {id, name, wordIds:[]}
+  meta: { rounds: 0 }
+};
+
+// Bilingual topic name map
+const TOPIC_ZH = {
+  'General Mathematics': '基础数学',
+  'Algebra': '代数',
+  'Geometry': '几何',
+  'Fractions & Ratios': '分数与比例',
+  'Place Value': '位值',
+  'Probability, Data & Statistics': '概率、数据与统计',
+};
+function topicLabel(t) {
+  const zh = TOPIC_ZH[t];
+  return zh ? t + ' · ' + zh : t;
+}
+
+// Game state
+let gm = {
+  queue: [],        // words for this round
+  current: 0,
+  mode: 'en-zh',
+  correct: 0,
+  attempts: 0,
+  options: 2,       // adaptive: 2–8
+  isReview: false,
+  selectedTopics: [],
+};
+
+let editingId = null;
+let editingSetId = null;
+let bookMode = 'open'; // 'open' or 'closed'
+let pickerSelected = new Set();
+let setupMode = 'topic'; // 'topic' or 'set'
+let selectedSetId = null;
+let CLIENT_ID = '1037518809061-eil9sc3krri9np1sp3pukc9jeuilb984.apps.googleusercontent.com';
+let accessToken = null;
+let driveFileId = null;
+let tokenClient = null;
+let studyTopicFilter = 'all';
+let bankTopicFilter = 'all';
+let syncTimer = null;
+
+// ══════════════════════════════════════
+// PERSISTENCE
+// ══════════════════════════════════════
+function saveLocal() { localStorage.setItem('vocab_v2', JSON.stringify({ db, driveFileId })); }
+function loadLocal() {
+  const raw = localStorage.getItem('vocab_v2');
+  if (!raw) return;
+  try {
+    const d = JSON.parse(raw);
+    if (d.db) db = d.db;
+    if (d.driveFileId) driveFileId = d.driveFileId;
+    // ensure sets array exists
+    if (!db.sets) db.sets = [];
+    if (!db.refLookups) db.refLookups = {};
+    // migrate: convert old single topic string to topics array
+    db.words.forEach(w => {
+      if (!Array.isArray(w.topics)) {
+        w.topics = [w.topic || 'General'];
+        delete w.topic;
+      }
+    });
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════
+// NAV
+// ══════════════════════════════════════
+function showTab(name, tabEl) {
+  // hide all screens + game
+  document.querySelectorAll('.screen').forEach(s => { s.style.display = 'none'; s.classList.remove('active'); });
+  document.getElementById('game-screen').classList.remove('active');
+  document.getElementById('result-screen').classList.remove('active');
+  // deactivate tabs
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  if (tabEl) tabEl.classList.add('active');
+
+  const map = { home:'screen-home', study:'screen-study', words:'screen-words', stats:'screen-stats', sets:'screen-sets', 'match-setup':'screen-match-setup' };
+  const id = map[name];
+  if (id) { const el = document.getElementById(id); el.style.display = 'block'; el.classList.add('active'); }
+
+  if (name === 'home') renderHome();
+  if (name === 'study') renderStudyFilters(), renderStudy();
+  if (name === 'words') renderBankFilters(), renderBank();
+  if (name === 'stats') renderStats();
+  if (name === 'match-setup') renderSetup();
+  if (name === 'sets') renderSets();
+}
+
+// ══════════════════════════════════════
+// HOME
+// ══════════════════════════════════════
+function renderHome() {
+  document.getElementById('hw-count').textContent = db.words.length;
+  document.getElementById('hw-rounds').textContent = db.meta.rounds;
+  const acc = allAccuracy();
+  document.getElementById('hw-acc').textContent = acc !== null ? acc + '%' : '—';
+}
+function allAccuracy() {
+  const all = Object.values(db.accuracy).filter(a => a.attempts > 0);
+  if (!all.length) return null;
+  const tot = all.reduce((s,a) => s+a.attempts,0);
+  const cor = all.reduce((s,a) => s+a.correct,0);
+  return Math.round(cor/tot*100);
+}
+function startReview() { gm.isReview = true; showTab('match-setup', null); }
+
+// ══════════════════════════════════════
+// TOPICS HELPER
+// ══════════════════════════════════════
+function allTopics() {
+  const set = new Set();
+  db.words.forEach(w => {
+    const ts = Array.isArray(w.topics) ? w.topics : [w.topic || 'General'];
+    ts.forEach(t => set.add(t));
+  });
+  const order = Object.keys(TOPIC_ZH);
+  const ordered = order.filter(t => set.has(t));
+  set.forEach(t => { if (!ordered.includes(t)) ordered.push(t); });
+  return ordered;
+}
+function wordsForTopics(topics) {
+  if (!topics || topics.length === 0 || topics.includes('all')) return db.words;
+  return db.words.filter(w => {
+    const wt = Array.isArray(w.topics) ? w.topics : [w.topic || 'General'];
+    return wt.some(t => topics.includes(t));
+  });
+}
+
+// ══════════════════════════════════════
+// MATCH SETUP
+// ══════════════════════════════════════
+function renderSetup() {
+  const topics = allTopics();
+  const container = document.getElementById('topic-select-pills');
+  if (!gm.selectedTopics.length) gm.selectedTopics = [...topics]; // default all
+
+  container.innerHTML = `
+    <button class="pill topic-pill ${gm.selectedTopics.length === topics.length ? 'active' : ''}" onclick="toggleAllTopics(this)">All topics</button>
+    ${topics.map(t => `
+      <button class="pill topic-pill ${gm.selectedTopics.includes(t) ? 'active' : ''}" data-topic="${esc(t)}" onclick="toggleTopic(this,this.dataset.topic)"><span style='font-weight:600'>${esc(t)}</span><span style='font-size:12px;opacity:0.7;display:block;margin-top:1px'>${esc(TOPIC_ZH[t]||'')}</span></button>
+    `).join('')}
+  `;
+  updateTopicCount();
+
+  // mode pills
+  document.querySelectorAll('#mode-pills .pill').forEach(p => {
+    p.onclick = () => { document.querySelectorAll('#mode-pills .pill').forEach(x=>x.classList.remove('active')); p.classList.add('active'); };
+  });
+
+  // review mode
+  if (gm.isReview) {
+    const struggles = db.words.filter(w => {
+      const a = db.accuracy[w.id];
+      return !a || a.attempts === 0 || (a.correct/a.attempts) < 0.6;
+    });
+    if (struggles.length) {
+      gm.selectedTopics = [...new Set(struggles.flatMap(w => Array.isArray(w.topics) ? w.topics : [w.topic||'General']))];
+      renderSetup();
+    }
+    gm.isReview = false;
+  }
+
+  updateSlider();
+}
+
+function toggleTopic(btn, topic) {
+  if (gm.selectedTopics.includes(topic)) {
+    gm.selectedTopics = gm.selectedTopics.filter(t => t !== topic);
+  } else {
+    gm.selectedTopics.push(topic);
+  }
+  btn.classList.toggle('active', gm.selectedTopics.includes(topic));
+  // update "all" button
+  const all = allTopics();
+  document.querySelector('[onclick*="toggleAllTopics"]')?.classList.toggle('active', gm.selectedTopics.length === all.length);
+  updateTopicCount();
+}
+
+function toggleAllTopics(btn) {
+  const all = allTopics();
+  if (gm.selectedTopics.length === all.length) {
+    gm.selectedTopics = [];
+    document.querySelectorAll('#topic-select-pills .pill[data-topic]').forEach(p => p.classList.remove('active'));
+    btn.classList.remove('active');
+  } else {
+    gm.selectedTopics = [...all];
+    document.querySelectorAll('#topic-select-pills .pill[data-topic]').forEach(p => p.classList.add('active'));
+    btn.classList.add('active');
+  }
+  updateTopicCount();
+}
+
+function updateTopicCount() {
+  const words = wordsForTopics(gm.selectedTopics);
+  document.getElementById('topic-word-count').textContent = `${words.length} word${words.length !== 1 ? 's' : ''} available from selected topics`;
+  const slider = document.getElementById('round-slider');
+  slider.max = Math.max(3, words.length);
+  if (parseInt(slider.value) > words.length) slider.value = words.length;
+  updateSlider();
+}
+
+function updateSlider() {
+  const v = document.getElementById('round-slider').value;
+  document.getElementById('slider-val').textContent = v;
+}
+
+// ══════════════════════════════════════
+// GAME
+// ══════════════════════════════════════
+function startGame() {
+  let pool;
+  if (setupMode === 'set') {
+    if (!selectedSetId) { toast('Please select a lesson set first!'); return; }
+    const s = db.sets.find(x=>x.id===selectedSetId);
+    pool = s ? db.words.filter(w=>s.wordIds.includes(w.id)) : [];
+  } else {
+    pool = wordsForTopics(gm.selectedTopics);
+  }
+  if (pool.length < 2) { toast('Add at least 2 words in the selected topics!'); return; }
+
+  gm.mode = document.querySelector('#mode-pills .pill.active')?.dataset.mode || 'en-zh';
+  const size = Math.min(parseInt(document.getElementById('round-slider').value)||10, pool.length);
+
+  // weight towards low-accuracy words
+  const sorted = [...pool].sort((a,b) => getAcc(a.id) - getAcc(b.id));
+  const weighted = [];
+  sorted.forEach((w,i) => { weighted.push(w); if (i < Math.ceil(sorted.length/3)) weighted.push(w); });
+
+  gm.queue = [];
+  const used = new Set();
+  while (gm.queue.length < size && weighted.length > 0) {
+    const idx = Math.floor(Math.random()*weighted.length);
+    const w = weighted.splice(idx,1)[0];
+    if (!used.has(w.id)) { gm.queue.push(w); used.add(w.id); }
+  }
+
+  gm.current = 0; gm.correct = 0; gm.attempts = 0;
+  gm.options = 2; // start easy
+  db.meta.rounds++;
+  saveLocal();
+  // show/hide ref button
+  const refBtn = document.getElementById('ref-btn');
+  if (bookMode === 'open') refBtn.classList.add('visible'); else refBtn.classList.remove('visible');
+
+  // hide all screens, show game
+  document.querySelectorAll('.screen').forEach(s => { s.style.display='none'; s.classList.remove('active'); });
+  document.getElementById('result-screen').classList.remove('active');
+  document.getElementById('game-screen').classList.add('active');
+
+  renderQuestion();
+}
+
+function quitGame() {
+  document.getElementById('game-screen').classList.remove('active');
+  document.getElementById('ref-btn').classList.remove('visible');
+  closeRefPanel();
+  showTab('match-setup', null);
+}
+
+function renderQuestion() {
+  const w = gm.queue[gm.current];
+  const total = gm.queue.length;
+
+  // progress
+  document.getElementById('game-counter').textContent = `${gm.current+1} / ${total}`;
+  document.getElementById('game-score').textContent = `${gm.correct}✓`;
+  document.getElementById('game-progress-bar').style.width = `${(gm.current/total)*100}%`;
+
+  // difficulty dots
+  const dots = [];
+  for (let i = 0; i < 8; i++) dots.push(`<div class="diff-dot${i < gm.options ? ' lit' : ''}"></div>`);
+  document.getElementById('difficulty-badge').innerHTML = dots.join('') + `<span style="margin-left:6px">${gm.options} options</span>`;
+
+  // mode label + question
+  let qLabel, qText, qIsZh, hintText, optIsZh;
+  if (gm.mode === 'en-zh') {
+    qLabel = 'What is the Chinese translation?';
+    qText = w.enTerm; qIsZh = false;
+    hintText = '';
+    optIsZh = true;
+  } else if (gm.mode === 'zh-en') {
+    qLabel = '英文是什么？ What is the English term?';
+    qText = w.zhTerm; qIsZh = true;
+    hintText = '';
+    optIsZh = false;
+  } else {
+    qLabel = 'Which definition matches this term?';
+    qText = w.enTerm; qIsZh = false;
+    hintText = w.zhTerm;
+    optIsZh = false;
+  }
+
+  document.getElementById('question-mode-label').textContent = qLabel;
+  const qEl = document.getElementById('question-word');
+  qEl.textContent = qText;
+  qEl.className = qIsZh ? 'zh' : '';
+  document.getElementById('question-hint').textContent = hintText;
+
+  // build options
+  const allPool = wordsForTopics(gm.selectedTopics).filter(x => x.id !== w.id);
+  const distractors = shuffle(allPool).slice(0, gm.options - 1);
+  const options = shuffle([w, ...distractors]);
+
+  const grid = document.getElementById('options-grid');
+  const cols = gm.options <= 4 ? 1 : 2;
+  grid.style.gridTemplateColumns = cols === 2 ? '1fr 1fr' : '1fr';
+  grid.innerHTML = options.map(opt => {
+    let label;
+    if (gm.mode === 'en-zh') label = opt.zhTerm;
+    else if (gm.mode === 'zh-en') label = opt.enTerm;
+    else label = opt.enDef || opt.enTerm;
+    return `<button class="option-btn${optIsZh ? ' zh-opt' : ''}" data-id="${opt.id}" onclick="handleAnswer(this,'${w.id}','${opt.id}')">${esc(label)}</button>`;
+  }).join('');
+}
+
+function handleAnswer(btn, correctId, chosenId) {
+  // disable all
+  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+
+  const isCorrect = chosenId === correctId;
+  gm.attempts++;
+
+  if (!db.accuracy[correctId]) db.accuracy[correctId] = { attempts:0, correct:0 };
+  db.accuracy[correctId].attempts++;
+  if (isCorrect) { db.accuracy[correctId].correct++; gm.correct++; }
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    // increase difficulty
+    if (gm.options < 8) gm.options = Math.min(8, gm.options + 1);
+    setTimeout(nextQuestion, 700);
+  } else {
+    btn.classList.add('wrong');
+    // show correct answer
+    const correctBtn = document.querySelector(`.option-btn[data-id="${correctId}"]`);
+    if (correctBtn) correctBtn.classList.add('reveal');
+    // decrease difficulty
+    if (gm.options > 2) gm.options = Math.max(2, gm.options - 1);
+    setTimeout(nextQuestion, 1800);
+  }
+
+  saveLocal();
+  debouncedSync();
+}
+
+function nextQuestion() {
+  gm.current++;
+  if (gm.current >= gm.queue.length) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResult() {
+  document.getElementById('ref-btn').classList.remove('visible');
+  closeRefPanel();
+  document.getElementById('game-screen').classList.remove('active');
+  const res = document.getElementById('result-screen');
+  res.classList.add('active');
+
+  const pct = gm.attempts ? Math.round(gm.correct/gm.attempts*100) : 0;
+  document.getElementById('result-score').textContent = `${gm.correct} / ${gm.attempts}`;
+
+  let emoji, msg;
+  if (pct === 100) { emoji = '🏆'; msg = 'Perfect! 完美！'; }
+  else if (pct >= 80) { emoji = '🎉'; msg = 'Great work! 很好！'; }
+  else if (pct >= 60) { emoji = '👍'; msg = 'Good effort! Keep practising. 继续练习！'; }
+  else { emoji = '💪'; msg = 'Keep going — you\'ll get there! 加油！'; }
+
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-msg').textContent = msg;
+  document.getElementById('result-diff').textContent = `Difficulty reached: ${gm.options} options`;
+}
+
+
+// ── Book mode ──
+function setBookMode(mode) {
+  bookMode = mode;
+  document.getElementById('open-book-btn').classList.toggle('active', mode==='open');
+  document.getElementById('closed-book-btn').classList.toggle('active', mode==='closed');
+  document.getElementById('book-mode-desc').textContent = mode==='open'
+    ? "She can open a reference list of the current round's words at any time."
+    : "No reference available — memory only.";
+}
+
+// ── Reference panel ──
+function openRefPanel() {
+  // track which word was showing when panel was opened
+  const w = gm.queue[gm.current];
+  if (w) {
+    if (!db.refLookups[w.id]) db.refLookups[w.id] = { count: 0 };
+    db.refLookups[w.id].count++;
+    saveLocal(); debouncedSync();
+  }
+  // render panel
+  const body = document.getElementById('ref-panel-body');
+  body.innerHTML = gm.queue.map(word => {
+    const defs = [];
+    if (word.enDef) defs.push(`<div class="ref-row-def">${esc(word.enDef)}</div>`);
+    if (word.zhDef) defs.push(`<div class="ref-row-def zh">${esc(word.zhDef)}</div>`);
+    return `<div class="ref-row">
+      <div>
+        <div class="ref-row-en">${esc(word.enTerm)}</div>
+        ${defs.join('')}
+      </div>
+      <div class="ref-row-zh">${esc(word.zhTerm)}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('ref-panel').classList.add('open');
+  document.getElementById('ref-overlay').classList.add('open');
+}
+
+function closeRefPanel() {
+  document.getElementById('ref-panel').classList.remove('open');
+  document.getElementById('ref-overlay').classList.remove('open');
+}
+
+function shuffle(arr) { return [...arr].sort(() => Math.random()-0.5); }
+function getAcc(id) { const a = db.accuracy[id]; return (!a||!a.attempts) ? 1 : a.correct/a.attempts; }
+
+// ══════════════════════════════════════
+// STUDY
+// ══════════════════════════════════════
+function renderStudyFilters() {
+  const topics = allTopics();
+  const row = document.getElementById('study-topic-filters');
+  row.innerHTML = `<button class="topic-filter-pill ${studyTopicFilter==='all'?'active':''}" onclick="setStudyFilter('all',this)">All</button>`
+    + topics.map(t => `<button class="topic-filter-pill ${studyTopicFilter===t?'active':''}" data-topic="${esc(t)}" onclick="setStudyFilter(this.dataset.topic,this)">${esc(topicLabel(t))}</button>`).join('');
+}
+function setStudyFilter(t, btn) {
+  studyTopicFilter = t;
+  document.querySelectorAll('#study-topic-filters .topic-filter-pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  renderStudy();
+}
+function renderStudy() {
+  const q = (document.getElementById('study-q')?.value||'').toLowerCase();
+  let words = db.words;
+  if (studyTopicFilter !== 'all') words = words.filter(w=>(Array.isArray(w.topics)?w.topics:[w.topic||'General']).includes(studyTopicFilter));
+  if (q) words = words.filter(w=>
+    w.enTerm.toLowerCase().includes(q)||w.zhTerm.includes(q)||
+    (w.enDef||'').toLowerCase().includes(q)||(w.zhDef||'').includes(q)
+  );
+  const list = document.getElementById('study-list');
+  if (!words.length) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">📖</div><h3>No words found</h3><p>Try a different search or add words in the Words tab.</p></div>`;
+    return;
+  }
+  list.innerHTML = words.map(w => {
+    const a = db.accuracy[w.id];
+    const pct = a&&a.attempts ? Math.round(a.correct/a.attempts*100) : -1;
+    const chip = pct<0 ? '<span class="acc-chip acc-none">New</span>' :
+      `<span class="acc-chip ${pct>=80?'acc-good':pct>=50?'acc-mid':'acc-low'}">${pct}%</span>`;
+    return `<div class="word-card" onclick="toggleDef(this)">
+      <div class="word-card-top">
+        <div>
+          <div class="word-card-en">${esc(w.enTerm)}</div>
+          <div class="word-card-zh">${esc(w.zhTerm)}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
+          ${chip}
+          <span class="word-card-topic">${esc(topicLabel((Array.isArray(w.topics)?w.topics:[w.topic||'General'])[0]))}</span>
+        </div>
+      </div>
+      <div class="word-defs">
+        ${w.enDef?`<div class="def-label">Definition</div><div class="def-text">${esc(w.enDef)}</div>`:''}
+        ${w.zhDef?`<div class="def-label zh">释义</div><div class="def-text zh">${esc(w.zhDef)}</div>`:''}
+        <div class="def-label">Accuracy</div>
+        <div class="def-text">${a&&a.attempts ? `${a.correct}/${a.attempts} correct` : 'Not practised yet'}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleDef(el) { el.querySelector('.word-defs').classList.toggle('open'); }
+
+// ══════════════════════════════════════
+// WORD BANK
+// ══════════════════════════════════════
+function updateTopicDatalist() {
+  const topics = allTopics();
+  document.getElementById('topic-datalist').innerHTML = topics.map(t=>`<option value="${esc(t)}">`).join('');
+}
+function saveWord() {
+  const en = v('f-en'), zh = v('f-zh'), defEn = v('f-def-en'), defZh = v('f-def-zh');
+  const topicRaw = v('f-topic') || 'General';
+  const topics = topicRaw.split(',').map(t=>t.trim()).filter(Boolean);
+  if (!en||!zh) { toast('English term and Chinese translation are required.'); return; }
+  if (editingId) {
+    const w = db.words.find(x=>x.id===editingId);
+    if (w) { w.enTerm=en; w.zhTerm=zh; w.enDef=defEn; w.zhDef=defZh; w.topics=topics; delete w.topic; }
+    cancelEdit();
+  } else {
+    db.words.push({ id: Date.now().toString(), enTerm:en, zhTerm:zh, enDef:defEn, zhDef:defZh, topics });
+    clearForm();
+  }
+  saveLocal(); debouncedSync();
+  renderBank(); updateTopicDatalist();
+  toast('Word saved ✓');
+}
+function editWord(id) {
+  const w = db.words.find(x=>x.id===id); if(!w) return;
+  editingId = id;
+  const wTopics = Array.isArray(w.topics) ? w.topics : [w.topic||'General'];
+  set('f-en',w.enTerm); set('f-zh',w.zhTerm); set('f-def-en',w.enDef||''); set('f-def-zh',w.zhDef||''); set('f-topic',wTopics.join(', '));
+  document.getElementById('save-btn').textContent = 'Save changes';
+  document.getElementById('cancel-btn').style.display = 'inline-flex';
+  document.getElementById('form-heading').textContent = 'Edit word';
+  document.getElementById('add-word-form').scrollIntoView({behavior:'smooth'});
+}
+function cancelEdit() {
+  editingId = null; clearForm();
+  document.getElementById('save-btn').textContent = 'Add word';
+  document.getElementById('cancel-btn').style.display = 'none';
+  document.getElementById('form-heading').textContent = 'Add new word';
+}
+function deleteWord(id) {
+  if (!confirm('Delete this word?')) return;
+  db.words = db.words.filter(x=>x.id!==id);
+  delete db.accuracy[id];
+  saveLocal(); debouncedSync(); renderBank();
+  toast('Word deleted.');
+}
+function clearForm() { ['f-en','f-zh','f-def-en','f-def-zh','f-topic'].forEach(id=>set(id,'')); }
+
+function renderBankFilters() {
+  const topics = allTopics();
+  const row = document.getElementById('bank-topic-filter');
+  row.innerHTML = `<button class="topic-filter-pill ${bankTopicFilter==='all'?'active':''}" onclick="setBankFilter('all',this)">All</button>`
+    + topics.map(t=>`<button class="topic-filter-pill ${bankTopicFilter===t?'active':''}" data-topic="${esc(t)}" onclick="setBankFilter(this.dataset.topic,this)">${esc(topicLabel(t))}</button>`).join('');
+  updateTopicDatalist();
+}
+function setBankFilter(t,btn) {
+  bankTopicFilter=t;
+  document.querySelectorAll('#bank-topic-filter .topic-filter-pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  renderBank();
+}
+function renderBank() {
+  let words = db.words;
+  if (bankTopicFilter!=='all') words = words.filter(w=>(Array.isArray(w.topics)?w.topics:[w.topic||'General']).includes(bankTopicFilter));
+  const list = document.getElementById('word-list');
+  if (!words.length) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">＋</div><h3>No words yet</h3><p>Use the form above to add your first word.</p></div>`;
+    return;
+  }
+  list.innerHTML = words.map(w => {
+    const a = db.accuracy[w.id];
+    const stats = a&&a.attempts ? `${Math.round(a.correct/a.attempts*100)}% (${a.attempts} tries)` : 'Not practised';
+    return `<div class="word-row">
+      <div class="word-row-info">
+        <div class="word-row-en">${esc(w.enTerm)}</div>
+        <div class="word-row-zh">${esc(w.zhTerm)}</div>
+        <div class="word-row-topic">${esc(topicLabel((Array.isArray(w.topics)?w.topics:[w.topic||'General'])[0]))} · ${stats}</div>
+      </div>
+      <button class="btn-icon" onclick="editWord('${w.id}')" title="Edit">✎</button>
+      <button class="delete-btn" onclick="deleteWord('${w.id}')" title="Delete">×</button>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════
+// STATS
+// ══════════════════════════════════════
+function renderStats() {
+  const acc = allAccuracy();
+  const practised = db.words.filter(w=>db.accuracy[w.id]?.attempts>0).length;
+  document.getElementById('stats-overview').innerHTML = `
+    <div class="ov-box"><div class="ov-num">${db.words.length}</div><div class="ov-lbl">Words</div></div>
+    <div class="ov-box"><div class="ov-num">${practised}</div><div class="ov-lbl">Practised</div></div>
+    <div class="ov-box"><div class="ov-num">${acc!==null?acc+'%':'—'}</div><div class="ov-lbl">Accuracy</div></div>
+  `;
+
+  // export + clear buttons
+  const statsScreen = document.getElementById('screen-stats');
+  if (!statsScreen.querySelector('.stats-actions')) {
+    const actDiv = document.createElement('div');
+    actDiv.className = 'stats-actions';
+    actDiv.innerHTML = `
+      <button class="btn btn-secondary btn-sm" onclick="exportStats()">⬇ Export CSV</button>
+      <button class="btn btn-danger btn-sm" onclick="clearStats()">Clear stats</button>
+    `;
+    statsScreen.insertBefore(actDiv, statsScreen.querySelector('.overview-grid'));
+  }
+
+  const sorted = [...db.words].sort((a,b)=>getAcc(a.id)-getAcc(b.id));
+  if (!sorted.length) {
+    document.getElementById('stats-list').innerHTML = '<div class="empty"><p>Complete a round to see stats here.</p></div>';
+    return;
+  }
+  document.getElementById('stats-list').innerHTML = sorted.map(w => {
+    const a = db.accuracy[w.id];
+    const pct = a&&a.attempts ? Math.round(a.correct/a.attempts*100) : null;
+    const color = pct===null?'var(--text3)':pct>=80?'var(--green)':pct>=50?'var(--amber)':'var(--red)';
+    return `<div class="stat-row">
+      <div style="flex:0 0 auto;min-width:0;max-width:160px">
+        <div class="stat-word" title="${esc(w.enTerm)}">${esc(w.enTerm)}</div>
+        <div class="stat-topic-tag">${esc((Array.isArray(w.topics)?w.topics:[w.topic||'General']).join(', '))}</div>
+      </div>
+      <div class="stat-bar-wrap"><div class="stat-bar" style="width:${pct??0}%;background:${color}"></div></div>
+      <div class="stat-pct" style="color:${color}">${pct!==null?pct+'%':'—'}</div>
+      <div class="stat-tries">${a?a.attempts+' tries':'new'}</div>
+    </div>`;
+  }).join('');
+
+  // reference lookups (secret teacher stat)
+  const refEntries = Object.entries(db.refLookups||{})
+    .filter(([,v])=>v.count>0)
+    .sort((a,b)=>b[1].count-a[1].count);
+  const refSection = document.getElementById('ref-stat-section') || (() => {
+    const el = document.createElement('div');
+    el.id = 'ref-stat-section';
+    el.className = 'card ref-stat-section';
+    document.getElementById('screen-stats').appendChild(el);
+    return el;
+  })();
+  if (!refEntries.length) { refSection.style.display='none'; return; }
+  refSection.style.display='block';
+  refSection.innerHTML = `<div class="card-title">Word list opened during rounds 📖</div>` +
+    refEntries.map(([id, v]) => {
+      const w = db.words.find(x=>x.id===id);
+      if (!w) return '';
+      return `<div class="ref-stat-row">
+        <div class="ref-stat-word">${esc(w.enTerm)}<div class="ref-stat-label">${esc(w.zhTerm)}</div></div>
+        <div class="ref-stat-count">${v.count}× looked up</div>
+      </div>`;
+    }).join('');
+}
+
+function exportStats() {
+  const rows = [['English term','Chinese','Topics','Attempts','Correct','Accuracy %','Reference lookups']];
+  db.words.forEach(w => {
+    const a = db.accuracy[w.id];
+    const ref = db.refLookups?.[w.id];
+    const topics = (Array.isArray(w.topics)?w.topics:[w.topic||'General']).join('; ');
+    const attempts = a?.attempts||0;
+    const correct = a?.correct||0;
+    const pct = attempts ? Math.round(correct/attempts*100) : '';
+    const lookups = ref?.count||0;
+    rows.push([w.enTerm, w.zhTerm, topics, attempts, correct, pct, lookups]);
+  });
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'vocab_stats_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  toast('Stats exported ✓');
+}
+
+function clearStats() {
+  if (!confirm('Clear all accuracy data and reference lookup counts? Word bank will not be affected.')) return;
+  db.accuracy = {};
+  db.refLookups = {};
+  saveLocal(); debouncedSync();
+  renderStats();
+  toast('Stats cleared.');
+}
+
+// ══════════════════════════════════════
+// GOOGLE DRIVE SYNC
+// ══════════════════════════════════════
+function openSyncModal() {
+  const modal = document.getElementById('sync-modal');
+  const msg = document.getElementById('sync-modal-msg');
+  const btns = document.getElementById('sync-modal-btns');
+  modal.classList.add('open');
+  if (accessToken) {
+    msg.textContent = 'Connected to Google Drive. Data syncs automatically after each round.';
+    btns.innerHTML = `<button class="btn btn-primary btn-sm" onclick="syncNow()">Sync now</button>
+      <button class="btn btn-secondary btn-sm" onclick="signOut()">Sign out</button>
+      <button class="btn btn-danger btn-sm" onclick="resetWordBank()">Reset word bank</button>
+      <button class="btn btn-secondary btn-sm" onclick="closeSyncModal()">Close</button>`;
+  } else {
+    msg.innerHTML = 'Sign in with Google to sync your word bank and progress across devices.<br><br><small style="color:var(--text3)">Your student will never see this screen.</small>';
+    btns.innerHTML = `<button class="btn btn-primary btn-sm" onclick="signIn()">Sign in with Google</button>
+      <button class="btn btn-danger btn-sm" onclick="resetWordBank()">Reset word bank</button>
+      <button class="btn btn-secondary btn-sm" onclick="closeSyncModal()">Not now</button>`;
+  }
+}
+function closeSyncModal() { document.getElementById('sync-modal').classList.remove('open'); }
+
+function signIn() {
+  if (!tokenClient) { toast('Google not loaded yet — try again in a moment.'); return; }
+  tokenClient.requestAccessToken();
+}
+function resetWordBank() {
+  if (!confirm('This will delete all words and accuracy data and reload the default word bank. Are you sure?')) return;
+  localStorage.removeItem('vocab_v2');
+  db = { words: [], accuracy: {}, sets: [], refLookups: {}, meta: { rounds: 0 } };
+  // re-run preload
+  initPreload();
+  saveLocal();
+  closeSyncModal();
+  renderHome();
+  updateTopicDatalist();
+  toast('Word bank reset to defaults ✓');
+}
+
+function signOut() {
+  if (accessToken) google.accounts.oauth2.revoke(accessToken, ()=>{});
+  accessToken = null;
+  document.getElementById('sync-dot').className = 'diff-dot';
+  document.getElementById('sync-label').textContent = 'Sync';
+  closeSyncModal(); toast('Signed out.');
+}
+
+function debouncedSync() { clearTimeout(syncTimer); syncTimer = setTimeout(()=>{ if(accessToken) syncNow(); }, 3000); }
+
+async function syncNow() {
+  closeSyncModal();
+  if (!accessToken) { openSyncModal(); return; }
+  document.getElementById('sync-label').textContent = 'Syncing…';
+  try {
+    if (!driveFileId) {
+      const search = await gFetch(`https://www.googleapis.com/drive/v3/files?q=name='vocab_eald_data.json'+and+trashed=false&fields=files(id)`);
+      if (search.files?.length) {
+        driveFileId = search.files[0].id;
+        const remote = await gFetch(`https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`);
+        if (remote?.words) {
+          db.words = remote.words;
+          const ra = remote.accuracy||{};
+          Object.keys(ra).forEach(id => {
+            if (!db.accuracy[id]||ra[id].attempts>db.accuracy[id].attempts) db.accuracy[id]=ra[id];
+          });
+          if (remote.meta) db.meta = remote.meta;
+          saveLocal(); renderHome();
+        }
+      }
+    }
+    const payload = JSON.stringify({ words:db.words, accuracy:db.accuracy, meta:db.meta });
+    if (driveFileId) {
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
+        method:'PATCH', headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'application/json'}, body:payload
+      });
+    } else {
+      const meta = await gFetch('https://www.googleapis.com/drive/v3/files','POST',{name:'vocab_eald_data.json',mimeType:'application/json'});
+      driveFileId = meta.id;
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
+        method:'PATCH', headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'application/json'}, body:payload
+      });
+    }
+    saveLocal();
+    const now = new Date();
+    document.getElementById('sync-label').textContent = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+    document.getElementById('sync-dot').className = 'diff-dot connected';
+    toast('Synced ✓');
+  } catch(e) {
+    console.error(e);
+    document.getElementById('sync-label').textContent = 'Error';
+    toast('Sync failed — check connection.');
+  }
+}
+
+async function gFetch(url, method='GET', body=null) {
+  const opts = { method, headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'application/json'} };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(url, opts);
+  return r.json();
+}
+
+function initGoogle() {
+  if (!window.google) return;
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: 'https://www.googleapis.com/auth/drive.file',
+    callback: resp => {
+      if (resp.access_token) { accessToken = resp.access_token; closeSyncModal(); syncNow(); }
+    }
+  });
+}
+
+
+// ══════════════════════════════════════
+// SETS
+// ══════════════════════════════════════
+function renderSets() {
+  const list = document.getElementById('sets-list');
+  if (!db.sets.length) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">🗂</div><h3>No sets yet</h3><p>Create a lesson set to group specific words together for a round.</p></div>`;
+    return;
+  }
+  list.innerHTML = db.sets.map(s => {
+    const words = db.words.filter(w => s.wordIds.includes(w.id));
+    const preview = words.slice(0,5).map(w => `<span class="set-word-chip">${esc(w.enTerm)}</span>`).join('');
+    const more = words.length > 5 ? `<span class="set-word-chip">+${words.length-5} more</span>` : '';
+    return `<div class="set-card">
+      <div class="set-card-top">
+        <div>
+          <div class="set-card-name">${esc(s.name)}</div>
+          <div class="set-card-count">${words.length} word${words.length!==1?'s':''}</div>
+        </div>
+        <div class="set-actions">
+          <button class="btn-icon" onclick="openSetModal('${s.id}')" title="Edit">✎</button>
+          <button class="delete-btn" onclick="deleteSet('${s.id}')" title="Delete">×</button>
+        </div>
+      </div>
+      <div class="set-card-words">${preview}${more}</div>
+    </div>`;
+  }).join('');
+}
+
+function openSetModal(setId) {
+  editingSetId = setId;
+  pickerSelected = new Set();
+  if (setId) {
+    const s = db.sets.find(x=>x.id===setId);
+    if (s) {
+      document.getElementById('set-name-input').value = s.name;
+      document.getElementById('set-modal-title').textContent = 'Edit set';
+      s.wordIds.forEach(id => pickerSelected.add(id));
+    }
+  } else {
+    document.getElementById('set-name-input').value = '';
+    document.getElementById('set-modal-title').textContent = 'New lesson set';
+  }
+  // populate topic filter
+  const sel = document.getElementById('picker-topic-filter');
+  sel.innerHTML = '<option value="all">All topics</option>' +
+    allTopics().map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('');
+  document.getElementById('picker-search').value = '';
+  renderPicker();
+  document.getElementById('set-modal').classList.add('open');
+}
+
+function closeSetModal() {
+  document.getElementById('set-modal').classList.remove('open');
+}
+
+function renderPicker() {
+  const q = (document.getElementById('picker-search').value||'').toLowerCase();
+  const topic = document.getElementById('picker-topic-filter').value;
+  let words = db.words;
+  if (topic !== 'all') words = words.filter(w=>(Array.isArray(w.topics)?w.topics:[w.topic||'General']).includes(topic));
+  if (q) words = words.filter(w=>w.enTerm.toLowerCase().includes(q)||w.zhTerm.includes(q));
+
+  document.getElementById('picker-selected-count').textContent =
+    `${pickerSelected.size} word${pickerSelected.size!==1?'s':''} selected`;
+
+  document.getElementById('word-picker-list').innerHTML = words.map(w => {
+    const sel = pickerSelected.has(w.id);
+    const wTopics = Array.isArray(w.topics)?w.topics:[w.topic||'General'];
+    return `<div class="word-picker-row${sel?' selected':''}" onclick="togglePick('${w.id}')">
+      <div class="word-picker-check"></div>
+      <div class="word-picker-info">
+        <div class="word-picker-en">${esc(w.enTerm)}</div>
+        <div class="word-picker-zh">${esc(w.zhTerm)}</div>
+        <div class="word-picker-topic">${esc(wTopics[0])}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function togglePick(id) {
+  if (pickerSelected.has(id)) pickerSelected.delete(id);
+  else pickerSelected.add(id);
+  renderPicker();
+}
+
+function saveSet() {
+  const name = (document.getElementById('set-name-input').value||'').trim();
+  if (!name) { toast('Please enter a set name.'); return; }
+  if (pickerSelected.size === 0) { toast('Please select at least one word.'); return; }
+  const wordIds = Array.from(pickerSelected);
+  if (editingSetId) {
+    const s = db.sets.find(x=>x.id===editingSetId);
+    if (s) { s.name=name; s.wordIds=wordIds; }
+  } else {
+    db.sets.push({ id: 'set_'+Date.now(), name, wordIds });
+  }
+  saveLocal(); debouncedSync();
+  closeSetModal();
+  renderSets();
+  toast('Set saved ✓');
+}
+
+function deleteSet(id) {
+  if (!confirm('Delete this set?')) return;
+  db.sets = db.sets.filter(x=>x.id!==id);
+  if (selectedSetId===id) selectedSetId=null;
+  saveLocal(); debouncedSync();
+  renderSets();
+  toast('Set deleted.');
+}
+
+// ── Setup mode toggle ──
+function setSetupMode(mode) {
+  setupMode = mode;
+  document.getElementById('setup-topic-section').style.display = mode==='topic' ? 'block' : 'none';
+  document.getElementById('setup-set-section').style.display = mode==='set' ? 'block' : 'none';
+  document.getElementById('setup-by-topic-btn').classList.toggle('active', mode==='topic');
+  document.getElementById('setup-by-set-btn').classList.toggle('active', mode==='set');
+  if (mode==='set') renderSetSelector();
+}
+
+function renderSetSelector() {
+  const grid = document.getElementById('set-select-grid');
+  if (!db.sets.length) {
+    grid.innerHTML = `<div style="font-size:14px;color:var(--text3);padding:12px 0">No sets yet — create one in the Sets tab.</div>`;
+    document.getElementById('set-word-count').textContent = '';
+    return;
+  }
+  grid.innerHTML = db.sets.map(s => {
+    const count = s.wordIds.filter(id=>db.words.find(w=>w.id===id)).length;
+    const active = selectedSetId===s.id;
+    return `<div class="set-select-card${active?' active':''}" onclick="selectSet('${s.id}')">
+      <div class="set-select-name">${esc(s.name)}</div>
+      <div class="set-select-meta">${count} word${count!==1?'s':''}</div>
+    </div>`;
+  }).join('');
+  updateSetWordCount();
+}
+
+function selectSet(id) {
+  selectedSetId = id;
+  document.querySelectorAll('.set-select-card').forEach(c=>c.classList.remove('active'));
+  document.querySelector(`.set-select-card[onclick*="${id}"]`)?.classList.add('active');
+  updateSetWordCount();
+}
+
+function updateSetWordCount() {
+  const el = document.getElementById('set-word-count');
+  if (!selectedSetId) { el.textContent = 'Select a set above'; return; }
+  const s = db.sets.find(x=>x.id===selectedSetId);
+  if (!s) return;
+  const count = s.wordIds.filter(id=>db.words.find(w=>w.id===id)).length;
+  el.textContent = `${count} word${count!==1?'s':''} in this set`;
+  const slider = document.getElementById('round-slider');
+  slider.max = Math.max(2, count);
+  if (parseInt(slider.value) > count) slider.value = Math.min(count, 10);
+  updateSlider();
+}
+
+// ══════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════
+function v(id) { return (document.getElementById(id)?.value||'').trim(); }
+function set(id,val) { const el=document.getElementById(id); if(el) el.value=val; }
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+let toastTimer;
+function toast(msg) {
+  const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+loadLocal();
+
+function initPreload() {
+  const PDS = 'Probability, Data & Statistics';
+  const GM = 'General Mathematics';
+  const ALG = 'Algebra';
+  const GEO = 'Geometry';
+  const FR = 'Fractions & Ratios';
+  db.words = [
+    // ── Probability, Data & Statistics ──
+    { id:'w001', enTerm:'Probability', zhTerm:'概率', enDef:'The likelihood of an event occurring, expressed as a number between 0 and 1', zhDef:'某个事件发生的可能性大小，用0到1之间的数表示', topics:[PDS] },
+    { id:'w002', enTerm:'Theoretical probability', zhTerm:'古典概型', enDef:'Probability calculated using mathematical reasoning: favorable outcomes ÷ total outcomes', zhDef:'根据数学推理计算的概率，公式为：有利结果数÷总结果数', topics:[PDS] },
+    { id:'w003', enTerm:'Experimental probability', zhTerm:'实验概率', enDef:'Probability determined by conducting experiments: times event occurred ÷ total trials', zhDef:'通过实际试验得到的概率，公式为：事件发生次数÷试验总次数', topics:[PDS] },
+    { id:'w004', enTerm:'Expected frequency', zhTerm:'预期次数', enDef:'The predicted number of times an outcome should occur in repeated trials', zhDef:'预测某个结果在重复试验中应该出现的次数', topics:[PDS] },
+    { id:'w005', enTerm:'Sample space', zhTerm:'样本空间', enDef:'The set of all possible outcomes in a probability experiment', zhDef:'随机试验所有可能结果的集合', topics:[PDS] },
+    { id:'w006', enTerm:'Outcome', zhTerm:'结果', enDef:'A possible result of a probability experiment', zhDef:'随机试验的一种可能发生的情况', topics:[PDS] },
+    { id:'w007', enTerm:'Event', zhTerm:'事件', enDef:'A situation made up of one or more outcomes', zhDef:'由一个或多个结果组成的情况', topics:[PDS] },
+    { id:'w008', enTerm:'Trial', zhTerm:'试验', enDef:'The process of conducting one probability experiment', zhDef:'进行一次随机实验的过程', topics:[PDS] },
+    { id:'w009', enTerm:'Data', zhTerm:'数据', enDef:'Information or measurements that have been collected', zhDef:'收集到的信息或测量值', topics:[PDS,GM] },
+    { id:'w010', enTerm:'Numerical data', zhTerm:'数值型数据', enDef:'Data that can be expressed as numbers and used in calculations (e.g., height, age)', zhDef:'可以用数字表示并进行计算的数据（如身高、年龄）', topics:[PDS] },
+    { id:'w011', enTerm:'Discrete data', zhTerm:'离散数据', enDef:'Numerical data that can only take specific values, usually from counting (e.g., number of students, dice rolls)', zhDef:'只能取特定数值的数值型数据，通常是计数得到的（如学生人数、骰子点数）', topics:[PDS] },
+    { id:'w012', enTerm:'Continuous data', zhTerm:'连续数据', enDef:'Numerical data that can take any value within a range, usually from measuring (e.g., height, time)', zhDef:'可以在某个范围内取任意数值的数值型数据，通常是测量得到的（如身高、时间）', topics:[PDS] },
+    { id:'w013', enTerm:'Categorical data', zhTerm:'分类数据', enDef:'Data expressed as categories or names, cannot be used in calculations (e.g., colors, gender)', zhDef:'用类别或名称表示的数据，不能进行数学计算（如颜色、性别）', topics:[PDS] },
+    { id:'w014', enTerm:'Nominal data', zhTerm:'无序分类数据', enDef:'Categorical data with no order or ranking (e.g., eye color, blood type)', zhDef:'没有顺序或等级关系的分类数据（如眼睛颜色、血型）', topics:[PDS] },
+    { id:'w015', enTerm:'Ordinal data', zhTerm:'有序分类数据', enDef:'Categorical data with a clear order or ranking (e.g., shirt sizes S/M/L, movie ratings)', zhDef:'有明确顺序或等级关系的分类数据（如衣服尺码S/M/L、电影评分）', topics:[PDS] },
+    { id:'w016', enTerm:'Frequency histogram', zhTerm:'频数直方图', enDef:'A column graph showing data frequencies where the columns touch each other with no gaps', zhDef:'用相邻的柱子表示数据频数的统计图，柱子之间没有间隙', topics:[PDS] },
+    { id:'w017', enTerm:'Column graph', zhTerm:'柱状图', enDef:'A graph using bars to show data, with gaps between the bars', zhDef:'用柱子表示数据的统计图，柱子之间有间隙', topics:[PDS] },
+    { id:'w018', enTerm:'Frequency table', zhTerm:'频数表', enDef:'A table recording how often each data value occurs', zhDef:'用表格记录每个数据值出现次数的统计表', topics:[PDS] },
+    { id:'w019', enTerm:'Frequency', zhTerm:'频数', enDef:'The number of times a data value or category appears', zhDef:'某个数据值或类别出现的次数', topics:[PDS] },
+    { id:'w020', enTerm:'Data value', zhTerm:'数据值', enDef:'The specific number or category being counted or measured', zhDef:'被统计或测量的具体数值或类别', topics:[PDS] },
+    { id:'w021', enTerm:'Tally', zhTerm:'计数符号', enDef:'Counting marks used to record frequencies (||||)', zhDef:'用"正"字或竖线(||||)记录次数的方法', topics:[PDS] },
+    { id:'w022', enTerm:'Scale', zhTerm:'刻度', enDef:'The evenly-spaced marks on an axis used to read values', zhDef:'坐标轴上均匀分布的标度，用来读取数值', topics:[PDS] },
+    { id:'w023', enTerm:'Axes', zhTerm:'坐标轴', enDef:'The horizontal (x-axis) and vertical (y-axis) lines on a graph', zhDef:'统计图的横轴(x轴)和纵轴(y轴)', topics:[PDS] },
+    { id:'w024', enTerm:'Label', zhTerm:'标签', enDef:'Text that identifies what the axis shows and its units', zhDef:'说明坐标轴表示的数据类型和单位的文字', topics:[PDS] },
+    { id:'w025', enTerm:'Title', zhTerm:'标题', enDef:'Text that explains the purpose or content of the graph', zhDef:'说明统计图目的或内容的文字', topics:[PDS] },
+    { id:'w026', enTerm:'Range', zhTerm:'极差', enDef:'The difference between the largest and smallest values in a dataset', zhDef:'数据集中最大值与最小值的差', topics:[PDS,GM] },
+    { id:'w027', enTerm:'Mean', zhTerm:'平均数', enDef:'The sum of all data values divided by the number of values', zhDef:'数据的总和除以数据个数得到的值', topics:[PDS,GM] },
+    { id:'w028', enTerm:'Median', zhTerm:'中位数', enDef:'The middle value when data is arranged in order from smallest to largest', zhDef:'将数据从小到大排列后位于中间位置的数值', topics:[PDS,GM] },
+    { id:'w029', enTerm:'Mode', zhTerm:'众数', enDef:'The value that appears most frequently in a dataset', zhDef:'数据集中出现次数最多的数值', topics:[PDS,GM] },
+    // ── General Mathematics ──
+    { id:'g001', enTerm:'Addition', zhTerm:'加法', enDef:'The operation of combining two or more numbers to find their total', zhDef:'将两个或多个数合并求总和的运算', topics:[GM] },
+    { id:'g002', enTerm:'Subtraction', zhTerm:'减法', enDef:'The operation of finding the difference between two numbers', zhDef:'求两个数之差的运算', topics:[GM] },
+    { id:'g003', enTerm:'Multiplication', zhTerm:'乘法', enDef:'The operation of repeated addition; finding the product of two numbers', zhDef:'重复加法的运算；求两个数的积', topics:[GM] },
+    { id:'g004', enTerm:'Division', zhTerm:'除法', enDef:'The operation of splitting a number into equal parts; finding how many times one number goes into another', zhDef:'将一个数分成相等部分的运算；求一个数能被另一个数整除几次', topics:[GM] },
+    { id:'g005', enTerm:'Sum', zhTerm:'和', enDef:'The result of adding two or more numbers together', zhDef:'两个或多个数相加的结果', topics:[GM] },
+    { id:'g006', enTerm:'Difference', zhTerm:'差', enDef:'The result of subtracting one number from another', zhDef:'一个数减去另一个数的结果', topics:[GM] },
+    { id:'g007', enTerm:'Product', zhTerm:'积', enDef:'The result of multiplying two or more numbers together', zhDef:'两个或多个数相乘的结果', topics:[GM] },
+    { id:'g008', enTerm:'Quotient', zhTerm:'商', enDef:'The result of dividing one number by another', zhDef:'一个数除以另一个数所得的结果', topics:[GM] },
+    { id:'g009', enTerm:'Remainder', zhTerm:'余数', enDef:'The amount left over after dividing one number by another', zhDef:'一个数除以另一个数后剩余的量', topics:[GM] },
+    { id:'g010', enTerm:'Greater than', zhTerm:'大于', enDef:'A comparison showing that one value is larger than another (symbol: >)', zhDef:'表示一个值比另一个值大的比较关系（符号：>）', topics:[GM] },
+    { id:'g011', enTerm:'Less than', zhTerm:'小于', enDef:'A comparison showing that one value is smaller than another (symbol: <)', zhDef:'表示一个值比另一个值小的比较关系（符号：<）', topics:[GM] },
+    { id:'g012', enTerm:'Equal to', zhTerm:'等于', enDef:'A comparison showing that two values are the same (symbol: =)', zhDef:'表示两个值相等的比较关系（符号：=）', topics:[GM] },
+    { id:'g013', enTerm:'Greater than or equal to', zhTerm:'大于或等于', enDef:'A comparison showing a value is larger than or the same as another (symbol: ≥)', zhDef:'表示一个值大于或等于另一个值（符号：≥）', topics:[GM] },
+    { id:'g014', enTerm:'Less than or equal to', zhTerm:'小于或等于', enDef:'A comparison showing a value is smaller than or the same as another (symbol: ≤)', zhDef:'表示一个值小于或等于另一个值（符号：≤）', topics:[GM] },
+    { id:'g015', enTerm:'Maximum', zhTerm:'最大值', enDef:'The largest value in a set of numbers', zhDef:'一组数中最大的值', topics:[GM] },
+    { id:'g016', enTerm:'Minimum', zhTerm:'最小值', enDef:'The smallest value in a set of numbers', zhDef:'一组数中最小的值', topics:[GM] },
+    { id:'g017', enTerm:'Integer', zhTerm:'整数', enDef:'A whole number that can be positive, negative, or zero (e.g., -3, 0, 5)', zhDef:'可以是正数、负数或零的整数（如-3、0、5）', topics:[GM] },
+    { id:'g018', enTerm:'Fraction', zhTerm:'分数', enDef:'A number representing part of a whole, written as one number over another (e.g., ¾)', zhDef:'表示整体一部分的数，写成一个数除以另一个数的形式（如¾）', topics:[GM,FR] },
+    { id:'g019', enTerm:'Decimal', zhTerm:'小数', enDef:'A number that uses a decimal point to show values less than one (e.g., 0.75)', zhDef:'使用小数点表示小于1的值的数（如0.75）', topics:[GM,'Place Value'] },
+    { id:'g020', enTerm:'Percentage', zhTerm:'百分比', enDef:'A number expressed as a fraction of 100 (e.g., 75%)', zhDef:'以100为分母表示的数（如75%）', topics:[GM] },
+    { id:'g021', enTerm:'Negative number', zhTerm:'负数', enDef:'A number less than zero, shown with a minus sign (e.g., -5)', zhDef:'小于零的数，用负号表示（如-5）', topics:[GM] },
+    { id:'g022', enTerm:'Positive number', zhTerm:'正数', enDef:'A number greater than zero', zhDef:'大于零的数', topics:[GM] },
+    { id:'g023', enTerm:'Square number', zhTerm:'平方数', enDef:'The result of multiplying a number by itself (e.g., 9 is a square number because 3 × 3 = 9)', zhDef:'一个数乘以自身的结果（如9是平方数，因为3×3=9）', topics:[GM] },
+    { id:'g024', enTerm:'Prime number', zhTerm:'质数', enDef:'A number greater than 1 that has exactly two factors: 1 and itself (e.g., 2, 3, 5, 7)', zhDef:'大于1且只有两个因数（1和本身）的数（如2、3、5、7）', topics:[GM] },
+    { id:'g025', enTerm:'Factor', zhTerm:'因数', enDef:'A number that divides evenly into another number (e.g., 3 is a factor of 12)', zhDef:'能整除另一个数的数（如3是12的因数）', topics:[GM] },
+    { id:'g026', enTerm:'Multiple', zhTerm:'倍数', enDef:'The result of multiplying a number by any whole number (e.g., 12 is a multiple of 3)', zhDef:'一个数乘以任意整数的结果（如12是3的倍数）', topics:[GM] },
+    { id:'g027', enTerm:'Estimate', zhTerm:'估算', enDef:'An approximate answer found by rounding or using mental calculations', zhDef:'通过四舍五入或心算得到的近似答案', topics:[GM,'Place Value'] },
+    { id:'g028', enTerm:'Round', zhTerm:'四舍五入', enDef:'To approximate a number to a given place value (e.g., 3.7 rounds to 4)', zhDef:'将数近似到给定位数（如3.7四舍五入为4）', topics:[GM,'Place Value'] },
+    { id:'g029', enTerm:'Place value', zhTerm:'位值', enDef:'The value of a digit based on its position in a number (e.g., in 345, the 3 has a place value of 300)', zhDef:'数字根据其在数中位置所代表的值（如345中，3的位值是300）', topics:[GM,'Place Value'] },
+    { id:'g030', enTerm:'Digit', zhTerm:'数字', enDef:'Any of the symbols 0–9 used to write numbers', zhDef:'用来书写数的0到9中的任意符号', topics:[GM,'Place Value'] },
+    { id:'g031', enTerm:'Odd', zhTerm:'奇数', enDef:'A whole number that cannot be divided exactly by 2 (e.g., 1, 3, 5, 7)', zhDef:'不能被2整除的整数（如1、3、5、7）', topics:[GM] },
+    { id:'g032', enTerm:'Even', zhTerm:'偶数', enDef:'A whole number that can be divided exactly by 2 (e.g., 2, 4, 6, 8)', zhDef:'能被2整除的整数（如2、4、6、8）', topics:[GM] },
+    { id:'g033', enTerm:'Square root', zhTerm:'平方根', enDef:'A number that when multiplied by itself gives the original number (e.g., √9 = 3)', zhDef:'乘以自身等于原数的数（如√9=3）', topics:[GM] },
+    // ── Algebra ──
+    { id:'a001', enTerm:'Variable', zhTerm:'变量', enDef:'A symbol (usually a letter) that represents an unknown or changing value', zhDef:'代表未知或变化值的符号（通常是字母）', topics:[ALG] },
+    { id:'a002', enTerm:'Expression', zhTerm:'表达式', enDef:'A combination of numbers, variables, and operations with no equals sign (e.g., 3x + 2)', zhDef:'由数、变量和运算符号组成的式子，没有等号（如3x+2）', topics:[ALG] },
+    { id:'a003', enTerm:'Equation', zhTerm:'方程', enDef:'A mathematical statement showing two expressions are equal (e.g., 3x + 2 = 11)', zhDef:'表示两个表达式相等的数学式子（如3x+2=11）', topics:[ALG] },
+    { id:'a004', enTerm:'Substitute', zhTerm:'代入', enDef:'To replace a variable with a known number value', zhDef:'用已知数值替换变量', topics:[ALG] },
+    { id:'a005', enTerm:'Simplify', zhTerm:'化简', enDef:'To reduce an expression to its simplest form by combining like terms', zhDef:'通过合并同类项将表达式化为最简形式', topics:[ALG] },
+    { id:'a006', enTerm:'Expand', zhTerm:'展开', enDef:'To remove brackets by multiplying (e.g., 2(x + 3) = 2x + 6)', zhDef:'通过乘法去掉括号（如2(x+3)=2x+6）', topics:[ALG] },
+    { id:'a007', enTerm:'Solve', zhTerm:'求解', enDef:'To find the value of the unknown that makes an equation true', zhDef:'求出使方程成立的未知数的值', topics:[ALG] },
+    { id:'a008', enTerm:'Unknown', zhTerm:'未知数', enDef:'A variable whose value has not yet been found', zhDef:'尚未求出值的变量', topics:[ALG] },
+    { id:'a009', enTerm:'Coefficient', zhTerm:'系数', enDef:'The number multiplied by a variable in a term (e.g., in 3x, the coefficient is 3)', zhDef:'一个项中与变量相乘的数（如3x中，系数是3）', topics:[ALG] },
+    { id:'a010', enTerm:'Term', zhTerm:'项', enDef:'A single number, variable, or the product of numbers and variables (e.g., 3x, 5, or 2y²)', zhDef:'单独的数、变量或数与变量的乘积（如3x、5或2y²）', topics:[ALG] },
+    { id:'a011', enTerm:'Constant', zhTerm:'常数', enDef:'A fixed value in an expression that does not change (e.g., the 4 in 2x + 4)', zhDef:'表达式中不变的固定值（如2x+4中的4）', topics:[ALG] },
+    // ── Geometry ──
+    { id:'e001', enTerm:'Angle', zhTerm:'角', enDef:'The space between two lines that meet at a point, measured in degrees', zhDef:'两条相交直线之间的空间，用度数表示', topics:[GEO] },
+    { id:'e002', enTerm:'Perimeter', zhTerm:'周长', enDef:'The total distance around the outside of a shape', zhDef:'图形外边界的总长度', topics:[GEO] },
+    { id:'e003', enTerm:'Area', zhTerm:'面积', enDef:'The amount of space inside a 2D shape, measured in square units', zhDef:'二维图形内部空间的大小，用平方单位表示', topics:[GEO] },
+    { id:'e004', enTerm:'Volume', zhTerm:'体积', enDef:'The amount of space inside a 3D shape, measured in cubic units', zhDef:'三维图形内部空间的大小，用立方单位表示', topics:[GEO] },
+    { id:'e005', enTerm:'Parallel', zhTerm:'平行', enDef:'Lines that are always the same distance apart and never meet', zhDef:'始终保持相同距离且永不相交的线', topics:[GEO] },
+    { id:'e006', enTerm:'Perpendicular', zhTerm:'垂直', enDef:'Lines that meet at a right angle (90°)', zhDef:'以直角（90°）相交的线', topics:[GEO] },
+    { id:'e007', enTerm:'Symmetry', zhTerm:'对称', enDef:'A shape has symmetry if it can be divided into two identical halves', zhDef:'如果图形可以被分成两个相同的部分，则该图形具有对称性', topics:[GEO] },
+    { id:'e008', enTerm:'Vertex', zhTerm:'顶点', enDef:'A point where two or more edges of a shape meet (corner)', zhDef:'图形中两条或多条边相交的点（角点）', topics:[GEO] },
+    { id:'e009', enTerm:'Edge', zhTerm:'边', enDef:'A straight line that forms part of the boundary of a shape', zhDef:'构成图形边界一部分的直线', topics:[GEO] },
+    { id:'e010', enTerm:'Face', zhTerm:'面', enDef:'A flat surface on a 3D shape', zhDef:'三维图形上的平面', topics:[GEO] },
+    // ── Fractions & Ratios ──
+    { id:'f001', enTerm:'Numerator', zhTerm:'分子', enDef:'The top number of a fraction, showing how many parts are taken', zhDef:'分数的上面的数，表示取了多少份', topics:[FR] },
+    { id:'f002', enTerm:'Denominator', zhTerm:'分母', enDef:'The bottom number of a fraction, showing the total number of equal parts', zhDef:'分数下面的数，表示总共分成了多少等份', topics:[FR] },
+    { id:'f003', enTerm:'Equivalent fraction', zhTerm:'等值分数', enDef:'Fractions that represent the same value (e.g., ½ = 2/4 = 4/8)', zhDef:'表示相同值的分数（如½=2/4=4/8）', topics:[FR] },
+    { id:'f004', enTerm:'Simplest form', zhTerm:'最简分数', enDef:'A fraction where the numerator and denominator have no common factors other than 1', zhDef:'分子和分母除1以外没有公因数的分数', topics:[FR] },
+    { id:'f005', enTerm:'Ratio', zhTerm:'比', enDef:'A comparison of two quantities showing how many times one contains the other (e.g., 3:2)', zhDef:'比较两个量的关系，表示一个量是另一个量的多少倍（如3:2）', topics:[FR] },
+    { id:'f006', enTerm:'Proportion', zhTerm:'比例', enDef:'An equation showing that two ratios are equal (e.g., 1:2 = 3:6)', zhDef:'表示两个比相等的等式（如1:2=3:6）', topics:[FR] },
+    // ── Place Value ──
+    { id:'p001', enTerm:'Ones', zhTerm:'个位', enDef:'The place value position representing single units (the rightmost digit before the decimal point)', zhDef:'表示单个单位的位值位置（小数点前最右边的数字）', topics:['Place Value'] },
+    { id:'p002', enTerm:'Tens', zhTerm:'十位', enDef:'The place value position representing groups of ten', zhDef:'表示十的倍数的位值位置', topics:['Place Value'] },
+    { id:'p003', enTerm:'Hundreds', zhTerm:'百位', enDef:'The place value position representing groups of one hundred', zhDef:'表示百的倍数的位值位置', topics:['Place Value'] },
+    { id:'p004', enTerm:'Thousands', zhTerm:'千位', enDef:'The place value position representing groups of one thousand', zhDef:'表示千的倍数的位值位置', topics:['Place Value'] },
+    { id:'p005', enTerm:'Ten thousands', zhTerm:'万位', enDef:'The place value position representing groups of ten thousand', zhDef:'表示万的倍数的位值位置', topics:['Place Value'] },
+    { id:'p006', enTerm:'Hundred thousands', zhTerm:'十万位', enDef:'The place value position representing groups of one hundred thousand', zhDef:'表示十万的倍数的位值位置', topics:['Place Value'] },
+    { id:'p007', enTerm:'Millions', zhTerm:'百万位', enDef:'The place value position representing groups of one million', zhDef:'表示百万的倍数的位值位置', topics:['Place Value'] },
+    { id:'p008', enTerm:'Decimal point', zhTerm:'小数点', enDef:'The dot that separates the whole number part from the fractional part of a number (e.g., 3.14)', zhDef:'分隔数的整数部分和小数部分的点（如3.14）', topics:['Place Value'] },
+    { id:'p009', enTerm:'Tenths', zhTerm:'十分位', enDef:'The first place value position after the decimal point, representing one tenth (0.1)', zhDef:'小数点后第一个位值位置，表示十分之一（0.1）', topics:['Place Value'] },
+    { id:'p010', enTerm:'Hundredths', zhTerm:'百分位', enDef:'The second place value position after the decimal point, representing one hundredth (0.01)', zhDef:'小数点后第二个位值位置，表示百分之一（0.01）', topics:['Place Value'] },
+    { id:'p011', enTerm:'Thousandths', zhTerm:'千分位', enDef:'The third place value position after the decimal point, representing one thousandth (0.001)', zhDef:'小数点后第三个位值位置，表示千分之一（0.001）', topics:['Place Value'] },
+    { id:'p012', enTerm:'Ten thousandths', zhTerm:'万分位', enDef:'The fourth place value position after the decimal point, representing one ten-thousandth (0.0001)', zhDef:'小数点后第四个位值位置，表示万分之一（0.0001）', topics:['Place Value'] },
+    { id:'p013', enTerm:'Hundred thousandths', zhTerm:'十万分位', enDef:'The fifth place value position after the decimal point, representing one hundred-thousandth (0.00001)', zhDef:'小数点后第五个位值位置，表示十万分之一（0.00001）', topics:['Place Value'] },
+    { id:'p014', enTerm:'Millionths', zhTerm:'百万分位', enDef:'The sixth place value position after the decimal point, representing one millionth (0.000001)', zhDef:'小数点后第六个位值位置，表示百万分之一（0.000001）', topics:['Place Value'] },
+    { id:'p015', enTerm:'Face value', zhTerm:'面值', enDef:'The actual value of a digit itself, regardless of its position (e.g., the face value of 7 in 374 is 7)', zhDef:'数字本身的值，与位置无关（如374中7的面值是7）', topics:['Place Value'] },
+    { id:'p016', enTerm:'Expanded form', zhTerm:'展开式', enDef:'Writing a number as the sum of each digit multiplied by its place value (e.g., 345 = 300 + 40 + 5)', zhDef:'将数写成每个数字与其位值相乘之和的形式（如345=300+40+5）', topics:['Place Value'] },
+    { id:'p017', enTerm:'Standard form', zhTerm:'标准形式', enDef:'Writing a number in the usual digit format (e.g., three hundred and forty-five = 345)', zhDef:'用普通数字格式书写数（如三百四十五=345）', topics:['Place Value'] },
+    { id:'p018', enTerm:'Leading digit', zhTerm:'首位数字', enDef:'The first non-zero digit of a number, used when rounding to estimate (e.g., in 4,372 the leading digit is 4)', zhDef:'数中第一个非零数字，用于估算时的四舍五入（如4372中首位数字是4）', topics:['Place Value'] },
+    { id:'p019', enTerm:'Whole number', zhTerm:'整数', enDef:'A number without fractions or decimals (e.g., 0, 1, 2, 3...)', zhDef:'没有分数或小数部分的数（如0、1、2、3……）', topics:['Place Value','General Mathematics'] },
+    { id:'p020', enTerm:'Ascending order', zhTerm:'升序', enDef:'Arranging numbers from smallest to largest', zhDef:'将数从小到大排列', topics:['Place Value','General Mathematics'] },
+    { id:'p021', enTerm:'Descending order', zhTerm:'降序', enDef:'Arranging numbers from largest to smallest', zhDef:'将数从大到小排列', topics:['Place Value','General Mathematics'] },
+    { id:'p022', enTerm:'Between', zhTerm:'介于…之间', enDef:'A number that is greater than one value and less than another (e.g., 5 is between 3 and 7)', zhDef:'大于一个值且小于另一个值的数（如5介于3和7之间）', topics:['Place Value'] },
+    { id:'p023', enTerm:'Consecutive', zhTerm:'连续的', enDef:'Numbers that follow one after another without gaps (e.g., 4, 5, 6 are consecutive)', zhDef:'依次相连没有间隔的数（如4、5、6是连续的）', topics:['Place Value','General Mathematics'] },
+    { id:'p024', enTerm:'Approximate', zhTerm:'近似值', enDef:'A value that is close to but not exactly the true value', zhDef:'接近但不完全等于真实值的数值', topics:['Place Value','General Mathematics'] },
+  ];
+  saveLocal();
+}
+
+// Pre-load words if bank is empty
+if (db.words.length === 0) initPreload();
+
+renderHome();
+updateTopicDatalist();
+
+const gis = document.createElement('script');
+gis.src = 'https://accounts.google.com/gsi/client';
+gis.onload = initGoogle;
+document.head.appendChild(gis);
+</script>
+</body>
+</html>
