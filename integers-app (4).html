@@ -1,0 +1,2385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>整数练习 · Integers</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --surface2: #22263a;
+  --border: #2e3348;
+  --accent: #5b8cff;
+  --green: #4ade80;
+  --red: #ff6b6b;
+  --amber: #ffb347;
+  --text: #eef0f8;
+  --text2: #9ba3bf;
+  --text3: #5c6480;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --number-line-h: 80px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; display: flex; flex-direction: column; }
+.zh { font-family: 'Noto Sans SC', sans-serif; }
+
+/* ── SCREENS ── */
+.screen { display: none; flex-direction: column; min-height: 100dvh; }
+.screen.active { display: flex; }
+
+/* ── PROFILE SCREEN ── */
+#screen-profile {
+  align-items: center; justify-content: center; padding: 40px 24px; gap: 20px;
+}
+.profile-logo { font-size: 48px; margin-bottom: 8px; }
+.profile-title { font-size: 26px; font-weight: 600; text-align: center; margin-bottom: 4px; }
+.profile-subtitle { font-size: 15px; color: var(--text2); text-align: center; margin-bottom: 24px; }
+.profile-subtitle .zh { display: block; font-size: 14px; color: var(--text2); margin-top: 4px; }
+.profile-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 24px; width: 100%; max-width: 380px;
+}
+.profile-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.profile-row {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  cursor: pointer; transition: border-color 0.15s;
+}
+.profile-row:hover { border-color: var(--accent); }
+.profile-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 16px; flex-shrink: 0; }
+.profile-info { flex: 1; }
+.profile-name { font-size: 15px; font-weight: 500; }
+.profile-meta { font-size: 12px; color: var(--text3); margin-top: 2px; }
+.profile-level-badge { font-size: 11px; padding: 2px 8px; border-radius: 100px; background: rgba(91,140,255,0.15); color: var(--accent); }
+.new-profile-row { display: flex; gap: 8px; }
+.new-profile-row input { flex: 1; }
+input[type=text], input[type=number], input[type=password] {
+  width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text); background: var(--surface2);
+  outline: none; transition: border-color 0.2s;
+}
+input:focus { border-color: var(--accent); }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 12px 22px; border-radius: var(--radius-sm); border: none;
+  font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.15s;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { filter: brightness(1.12); }
+.btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: var(--text2); }
+.btn-danger { background: var(--red); color: #fff; }
+.btn-sm { padding: 8px 14px; font-size: 13px; }
+.btn-full { width: 100%; }
+.btn-icon { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 18px; padding: 4px 8px; }
+.btn-icon:hover { color: var(--text); }
+
+/* ── MAIN GAME SCREEN ── */
+#screen-game {
+  flex-direction: column;
+}
+#game-header {
+  padding: 12px 20px; background: var(--surface); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 14px; flex-shrink: 0;
+}
+#player-name-display { font-size: 14px; font-weight: 600; flex: 1; }
+.level-badge { font-size: 12px; padding: 4px 12px; border-radius: 100px; background: rgba(91,140,255,0.15); color: var(--accent); font-weight: 600; }
+.streak-badge { font-size: 12px; padding: 4px 12px; border-radius: 100px; background: rgba(255,179,71,0.15); color: var(--amber); font-weight: 600; display: none; }
+.streak-badge.visible { display: inline-flex; align-items: center; gap: 4px; }
+#header-btns { display: flex; gap: 6px; }
+#header-btns button { background: none; border: 1px solid var(--border); color: var(--text2); border-radius: 8px; padding: 5px 12px; font-family: 'DM Sans', sans-serif; font-size: 12px; cursor: pointer; transition: all 0.15s; }
+#header-btns button:hover { border-color: var(--accent); color: var(--accent); }
+
+#game-body { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 24px 20px; max-width: 680px; margin: 0 auto; width: 100%; gap: 20px; }
+
+/* ── LANG TOGGLE ── */
+#lang-toggle { display: flex; gap: 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; align-self: flex-end; }
+.lang-btn { background: transparent; border: none; color: var(--text2); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 6px 14px; cursor: pointer; transition: all 0.15s; }
+.lang-btn.active { background: var(--accent); color: #fff; }
+
+/* ── QUESTION CARD ── */
+#question-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 28px 24px; width: 100%; text-align: center;
+}
+#level-mode-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 16px; }
+#question-display { font-size: clamp(32px, 8vw, 52px); font-weight: 700; letter-spacing: 2px; margin-bottom: 8px; line-height: 1.2; }
+#question-translation { font-size: 15px; color: var(--text2); min-height: 24px; }
+#question-translation .zh { font-family: 'Noto Sans SC', sans-serif; }
+
+/* ── NUMBER LINE ── */
+#numberline-container {
+  width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px 24px; display: none;
+}
+#numberline-container.visible { display: block; }
+#nl-label { font-size: 12px; color: var(--text3); margin-bottom: 14px; text-align: center; }
+#nl-canvas-wrap { position: relative; width: 100%; height: var(--number-line-h); }
+canvas#nl-canvas { width: 100%; height: 100%; }
+#nl-instruction { font-size: 13px; color: var(--text2); text-align: center; margin-top: 10px; min-height: 20px; }
+#nl-instruction .zh { display: block; font-family: 'Noto Sans SC', sans-serif; font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+/* ── ANSWER SECTION ── */
+#answer-section { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+#answer-row { display: flex; gap: 10px; align-items: center; width: 100%; max-width: 320px; }
+#answer-input { text-align: center; font-size: 22px; font-weight: 600; letter-spacing: 1px; }
+#submit-btn { flex-shrink: 0; }
+#feedback-box {
+  width: 100%; padding: 14px 20px; border-radius: var(--radius-sm); text-align: center;
+  font-size: 15px; font-weight: 500; display: none; line-height: 1.6;
+}
+#feedback-box.correct { background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.3); color: var(--green); display: block; }
+#feedback-box.wrong { background: rgba(255,107,107,0.12); border: 1px solid rgba(255,107,107,0.3); color: var(--red); display: block; }
+#feedback-zh { font-family: 'Noto Sans SC', sans-serif; font-size: 13px; opacity: 0.8; display: block; margin-top: 4px; }
+#next-btn { display: none; }
+#next-btn.visible { display: flex; }
+
+/* ── PROGRESS BAR ── */
+#progress-section { width: 100%; }
+#progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text3); margin-bottom: 6px; }
+#progress-bar-wrap { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+#progress-bar { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.5s; }
+#streak-to-next { font-size: 12px; color: var(--text3); text-align: center; margin-top: 6px; }
+
+/* ── STATS STRIP ── */
+#stats-strip { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; width: 100%; }
+.stat-mini { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; text-align: center; }
+.stat-mini-num { font-size: 22px; font-weight: 600; color: var(--accent); }
+.stat-mini-lbl { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.stat-mini-lbl .zh { display: block; font-family: 'Noto Sans SC', sans-serif; }
+
+/* ── LEVEL UP OVERLAY ── */
+#levelup-overlay {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.7); align-items: center; justify-content: center;
+}
+#levelup-overlay.active { display: flex; }
+#levelup-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 36px 32px; text-align: center; max-width: 340px; width: 90%;
+}
+#levelup-icon { font-size: 52px; margin-bottom: 16px; }
+#levelup-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+#levelup-msg { font-size: 15px; color: var(--text2); margin-bottom: 8px; line-height: 1.6; }
+#levelup-msg-zh { font-family: 'Noto Sans SC', sans-serif; font-size: 14px; color: var(--text3); margin-bottom: 24px; }
+
+/* ── SETTINGS MODAL ── */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 300; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; max-width: 380px; width: 90%; }
+.modal-box h3 { font-size: 18px; margin-bottom: 16px; }
+.field { margin-bottom: 14px; }
+label { font-size: 13px; font-weight: 500; color: var(--text2); display: block; margin-bottom: 6px; }
+.modal-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+
+/* ── PIN MODAL ── */
+#pin-modal .modal-box { text-align: center; max-width: 300px; }
+#pin-input-settings { text-align: center; font-size: 24px; letter-spacing: 8px; font-weight: 600; }
+
+/* ── STATS SCREEN ── */
+#screen-stats {
+  flex-direction: column; padding: 0;
+}
+#stats-header { padding: 16px 20px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+#stats-header h2 { font-size: 18px; font-weight: 600; flex: 1; }
+#stats-body { padding: 20px; flex: 1; overflow-y: auto; max-width: 680px; margin: 0 auto; width: 100%; }
+.stats-overview { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 20px; }
+.ov-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; text-align: center; }
+.ov-num { font-size: 28px; font-weight: 600; color: var(--accent); }
+.ov-lbl { font-size: 11px; color: var(--text2); margin-top: 3px; }
+.ov-lbl .zh { display: block; font-family: 'Noto Sans SC', sans-serif; }
+.type-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.type-row:last-child { border-bottom: none; }
+.type-label { font-size: 14px; font-weight: 500; width: 180px; flex-shrink: 0; }
+.type-label-zh { font-size: 12px; color: var(--text2); font-family: 'Noto Sans SC', sans-serif; }
+.type-bar-wrap { flex: 1; height: 7px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.type-bar { height: 100%; border-radius: 3px; }
+.type-pct { font-size: 13px; font-weight: 600; width: 36px; text-align: right; }
+.type-tries { font-size: 12px; color: var(--text3); width: 54px; text-align: right; }
+.level-breakdown { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--border); }
+.level-chip { font-size: 11px; padding: 2px 8px; border-radius: 100px; border: 1px solid var(--border); }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 16px; }
+.card-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3); margin-bottom: 14px; }
+
+
+
+/* ── INTRO SCREEN ── */
+#screen-intro { flex-direction: column; background: var(--bg); }
+#intro-header {
+  padding: 14px 20px; background: var(--surface); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+}
+#intro-header h2 { font-size: 16px; font-weight: 600; flex: 1; }
+#intro-body { flex: 1; overflow-y: auto; padding: 20px; max-width: 680px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 16px; }
+
+.intro-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; }
+.intro-section h3 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+.intro-section-zh { font-family: 'Noto Sans SC', sans-serif; font-size: 15px; color: var(--text); margin-bottom: 12px; }
+.intro-text { font-size: 14px; color: var(--text); line-height: 1.75; }
+.intro-text .zh { display: block; font-family: 'Noto Sans SC', sans-serif; font-size: 13px; color: var(--text2); margin-top: 6px; }
+
+.real-world-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.rw-card { background: var(--surface2); border-radius: var(--radius-sm); padding: 12px; }
+.rw-icon { font-size: 22px; margin-bottom: 6px; }
+.rw-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.rw-title-zh { font-family: 'Noto Sans SC', sans-serif; font-size: 12px; color: var(--text2); margin-bottom: 6px; }
+.rw-pos { font-size: 12px; color: var(--green); }
+.rw-neg { font-size: 12px; color: var(--red); }
+
+.intro-nl-wrap { position: relative; width: 100%; height: 80px; margin: 12px 0 4px; }
+canvas#intro-nl-canvas { width: 100%; height: 100%; }
+.intro-nl-caption { font-size: 12px; color: var(--text3); text-align: center; }
+
+/* intro check questions */
+.intro-check-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; }
+.intro-check-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.intro-check-title-zh { color: var(--text2); font-family: 'Noto Sans SC', sans-serif; font-size: 13px; color: var(--text3); margin-bottom: 14px; }
+.intro-number-display { font-size: 42px; font-weight: 700; text-align: center; margin: 16px 0; letter-spacing: 2px; }
+.posneg-btns { display: flex; gap: 10px; justify-content: center; margin-bottom: 12px; }
+.posneg-btn { padding: 12px 32px; border-radius: var(--radius-sm); border: 2px solid var(--border); background: transparent; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+.posneg-btn.pos { color: var(--green); border-color: var(--green); }
+.posneg-btn.pos:hover, .posneg-btn.pos.selected { background: rgba(74,222,128,0.15); }
+.posneg-btn.neg { color: var(--red); border-color: var(--red); }
+.posneg-btn.neg:hover, .posneg-btn.neg.selected { background: rgba(255,107,107,0.15); }
+.intro-nl-tap-wrap { position: relative; width: 100%; height: 80px; margin: 8px 0; cursor: crosshair; }
+canvas#intro-tap-nl { width: 100%; height: 100%; }
+.intro-tap-hint { font-size: 12px; color: var(--text3); text-align: center; margin-bottom: 8px; }
+.intro-check-feedback { font-size: 14px; font-weight: 500; text-align: center; min-height: 22px; margin-bottom: 8px; }
+.intro-check-feedback.correct { color: var(--green); }
+.intro-check-feedback.wrong { color: var(--red); }
+.intro-check-progress { font-size: 13px; color: var(--text3); text-align: center; margin-bottom: 6px; }
+
+/* ── TUTORIAL ── */
+#screen-tutorial { flex-direction: column; background: var(--bg); }
+#tut-header {
+  padding: 14px 20px; background: var(--surface); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+}
+#tut-header h2 { font-size: 16px; font-weight: 600; flex: 1; }
+#tut-overall-progress { font-size: 13px; color: var(--text3); }
+#tut-body { flex: 1; overflow-y: auto; padding: 20px; max-width: 680px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 16px; }
+
+/* step indicator */
+.tut-steps { display: flex; gap: 6px; flex-wrap: wrap; }
+.tut-step-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--text3); }
+.tut-step-dot.done { background: var(--green); border-color: var(--green); color: #fff; }
+.tut-step-dot.current { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* concept card */
+.tut-concept-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; }
+.tut-type-label { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.tut-type-zh { font-family: 'Noto Sans SC', sans-serif; font-size: 16px; color: var(--text); margin-bottom: 14px; }
+.tut-explanation { font-size: 14px; color: var(--text2); line-height: 1.7; }
+.tut-explanation .zh { display: block; font-family: 'Noto Sans SC', sans-serif; font-size: 13px; color: var(--text2); margin-top: 6px; }
+.tut-example { background: var(--surface2); border-radius: var(--radius-sm); padding: 12px 16px; margin-top: 12px; font-size: 16px; font-weight: 600; text-align: center; }
+.tut-example-zh { font-family: 'Noto Sans SC', sans-serif; font-size: 13px; color: var(--text); text-align: center; margin-top: 4px; }
+
+/* demo number line */
+.tut-nl-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; }
+.tut-nl-label { font-size: 12px; color: var(--text2); margin-bottom: 10px; text-align: center; }
+#tut-nl-wrap { position: relative; width: 100%; height: 80px; }
+canvas#tut-nl-canvas { width: 100%; height: 100%; }
+#tut-nl-instruction { font-size: 13px; color: var(--text2); text-align: center; margin-top: 8px; min-height: 40px; line-height: 1.6; }
+
+/* practice area */
+.tut-practice-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; }
+.tut-practice-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.tut-practice-title { font-size: 14px; font-weight: 600; }
+.tut-correct-badge { font-size: 13px; font-weight: 700; color: var(--green); }
+.tut-question { font-size: clamp(24px,5vw,36px); font-weight: 700; text-align: center; margin-bottom: 16px; letter-spacing: 2px; }
+.tut-answer-row { display: flex; gap: 10px; align-items: center; justify-content: center; margin-bottom: 12px; }
+.tut-answer-row input { width: 120px; text-align: center; font-size: 20px; font-weight: 600; }
+.tut-feedback { font-size: 14px; text-align: center; min-height: 22px; font-weight: 500; }
+.tut-feedback.correct { color: var(--green); }
+.tut-feedback.wrong { color: var(--red); }
+.tut-progress-bar-wrap { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; margin-top: 12px; }
+.tut-practice-nl-wrap { position: relative; width: 100%; height: 90px; margin-top: 14px; cursor: grab; touch-action: none; }
+.tut-practice-nl-wrap:active { cursor: grabbing; }
+canvas#tut-practice-nl { width: 100%; height: 100%; }
+.tut-practice-nl-label { font-size: 11px; color: var(--text2); text-align: center; margin-top: 6px; }
+.tut-progress-bar { height: 100%; background: var(--green); border-radius: 3px; transition: width 0.4s; }
+
+
+/* ── WRONG ANSWERS DETAIL ── */
+.type-row-expand {
+  width: 100%; background: none; border: none; text-align: left; cursor: pointer;
+  display: flex; align-items: center; gap: 6px; padding: 4px 0 0;
+  font-size: 12px; color: var(--text3); font-family: 'DM Sans', sans-serif;
+}
+.type-row-expand:hover { color: var(--text2); }
+.wrong-detail-panel {
+  display: none; width: 100%; margin-top: 8px; padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+.wrong-detail-panel.open { display: block; }
+.wrong-entry {
+  display: flex; align-items: center; gap: 10px; padding: 6px 0;
+  border-bottom: 1px solid var(--border); font-size: 13px;
+}
+.wrong-entry:last-child { border-bottom: none; }
+.wrong-q { font-weight: 600; flex: 1; font-family: 'DM Sans', monospace; }
+.wrong-ans { color: var(--red); font-weight: 600; white-space: nowrap; }
+.wrong-correct { color: var(--green); font-weight: 600; white-space: nowrap; }
+.wrong-level { font-size: 11px; color: var(--text3); white-space: nowrap; }
+.wrong-empty { font-size: 13px; color: var(--text3); padding: 8px 0; }
+
+
+/* ── NUMBER LINE ARROWS ── */
+#nl-arrow-controls {
+  display: none; align-items: center; justify-content: center; gap: 10px; margin-top: 12px;
+}
+#nl-arrow-controls.visible { display: flex; }
+.nl-arrow-btn {
+  width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--border);
+  background: var(--surface2); color: var(--text); font-size: 20px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; user-select: none; -webkit-user-select: none;
+}
+.nl-arrow-btn:hover { border-color: var(--accent); color: var(--accent); }
+.nl-arrow-btn:active { background: var(--accent); color: #fff; border-color: var(--accent); transform: scale(0.95); }
+#nl-arrow-val {
+  font-size: 20px; font-weight: 700; min-width: 60px; text-align: center;
+  padding: 8px 14px; background: var(--surface2); border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+}
+#nl-arrows-label {
+  font-size: 11px; color: var(--text3); text-align: center; margin-top: 6px; display: none;
+}
+#nl-arrows-label.visible { display: block; }
+
+/* Tutorial practice arrows */
+#tut-arrow-controls {
+  display: none; align-items: center; justify-content: center; gap: 10px; margin-top: 10px;
+}
+#tut-arrow-controls.visible { display: flex; }
+
+/* ── TOAST ── */
+#toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(16px); background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 10px 22px; border-radius: 100px; font-size: 14px; opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 500; white-space: nowrap; }
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 480px) {
+  .stats-overview { grid-template-columns: repeat(3,1fr); gap: 6px; }
+  .ov-num { font-size: 22px; }
+  #stats-strip { gap: 6px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ PROFILE SCREEN ══ -->
+<div id="screen-profile" class="screen active">
+  <div class="profile-logo">🔢</div>
+  <div class="profile-title">整数练习 · Integers</div>
+  <div class="profile-subtitle">
+    Addition &amp; Subtraction Practice
+    <span class="zh">加法与减法练习</span>
+  </div>
+  <div class="profile-card">
+    <div class="card-title" style="margin-bottom:12px">Select profile · 选择用户</div>
+    <div class="profile-list" id="profile-list"></div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:10px">New profile · 新用户</div>
+    <div class="new-profile-row">
+      <input type="text" id="new-name-input" placeholder="Enter your name · 输入姓名" maxlength="20">
+      <button class="btn btn-primary btn-sm" onclick="createProfile()">Go</button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ══ INTRO SCREEN ══ -->
+<div id="screen-intro" class="screen">
+  <div id="intro-header">
+    <h2>📖 What are negative numbers? · 什么是负数？</h2>
+    <div style="display:flex;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+      <button class="lang-btn active" id="intro-lang-en" onclick="setLang('en');renderIntro()">EN</button>
+      <button class="lang-btn" id="intro-lang-zh" onclick="setLang('zh');renderIntro()">中文</button>
+    </div>
+  </div>
+  <div id="intro-body">
+
+    <div class="intro-section">
+      <h3>Positive & Negative Numbers</h3>
+      <div class="intro-section-zh">正数与负数</div>
+      <div class="intro-text" id="intro-text-1"></div>
+    </div>
+
+    <div class="intro-section">
+      <h3>The Number Line · 数轴</h3>
+      <div class="intro-text" id="intro-text-2"></div>
+      <div class="intro-nl-wrap"><canvas id="intro-nl-canvas"></canvas></div>
+      <div class="intro-nl-caption" id="intro-nl-caption"></div>
+    </div>
+
+    <div class="intro-section">
+      <h3>Real World Examples · 现实生活中的例子</h3>
+      <div class="real-world-grid" id="rw-grid"></div>
+    </div>
+
+    <div class="intro-check-card">
+      <div class="intro-check-title" id="intro-check-title">Check your understanding · 检验理解</div>
+      <div class="intro-check-title-zh" id="intro-check-subtitle">Answer 5 questions to continue · 答对5题才能继续</div>
+      <div class="intro-check-progress" id="intro-check-progress">0 / 5 ✓</div>
+      <div id="intro-check-body"></div>
+      <div class="intro-check-feedback" id="intro-check-feedback"></div>
+      <div class="tut-progress-bar-wrap"><div class="tut-progress-bar" id="intro-progress-bar" style="width:0%"></div></div>
+    </div>
+
+    <button class="btn btn-primary btn-full" id="intro-continue-btn" onclick="introFinish()" style="display:none">
+      Continue to tutorial → 继续教程
+    </button>
+    <button class="btn btn-secondary btn-sm" style="align-self:center" onclick="tutSkip()">Skip · 跳过</button>
+  </div>
+</div>
+
+<!-- ══ TUTORIAL SCREEN ══ -->
+<div id="screen-tutorial" class="screen">
+  <div id="tut-header">
+    <h2>📚 Tutorial · 教程</h2>
+    <span id="tut-overall-progress">Type 1 of 7</span>
+    <div id="lang-toggle-tut" style="display:flex;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+      <button class="lang-btn active" id="tut-lang-en" onclick="setLang('en');renderTutStep()">EN</button>
+      <button class="lang-btn" id="tut-lang-zh" onclick="setLang('zh');renderTutStep()">中文</button>
+    </div>
+  </div>
+  <div id="tut-body">
+    <div class="tut-steps" id="tut-steps"></div>
+    <div class="tut-concept-card" id="tut-concept"></div>
+    <div class="tut-nl-card">
+      <div class="tut-nl-label" id="tut-nl-label">Demonstration · 示范</div>
+      <div id="tut-nl-wrap"><canvas id="tut-nl-canvas"></canvas></div>
+      <div id="tut-nl-instruction"></div>
+    </div>
+    <div class="tut-practice-card" id="tut-practice">
+      <div class="tut-practice-header">
+        <span class="tut-practice-title" id="tut-practice-title">Practice · 练习</span>
+        <span class="tut-correct-badge" id="tut-correct-badge">0 / 5 ✓</span>
+      </div>
+      <div class="tut-question" id="tut-question"></div>
+      <div class="tut-answer-row">
+        <input type="number" id="tut-answer" placeholder="?" autocomplete="off" onkeydown="if(event.key==='Enter')tutSubmit()">
+        <button class="btn btn-primary btn-sm" onclick="tutSubmit()">✓</button>
+      </div>
+      <div class="tut-feedback" id="tut-feedback"></div>
+      <div class="tut-practice-nl-wrap"><canvas id="tut-practice-nl"></canvas></div>
+      <div id="tut-arrow-controls">
+        <button class="nl-arrow-btn" onpointerdown="startTutArrowHold(-1)" onpointerup="stopTutArrowHold()" onpointerleave="stopTutArrowHold()">←</button>
+        <div id="tut-arrow-val">—</div>
+        <button class="nl-arrow-btn" onpointerdown="startTutArrowHold(1)" onpointerup="stopTutArrowHold()" onpointerleave="stopTutArrowHold()">→</button>
+      </div>
+      <div class="tut-practice-nl-label" id="tut-practice-nl-label">Reference number line · 参考数轴</div>
+      <div class="tut-progress-bar-wrap"><div class="tut-progress-bar" id="tut-progress-bar" style="width:0%"></div></div>
+    </div>
+    <button class="btn btn-secondary btn-full" id="tut-next-btn" onclick="tutNextStep()" style="display:none">Next type → 下一类型</button>
+    <button class="btn btn-primary btn-full" id="tut-finish-btn" onclick="tutFinish()" style="display:none">Start practising! 开始练习！</button>
+    <button class="btn btn-secondary btn-sm" style="align-self:center;margin-top:4px" onclick="tutSkip()">Skip tutorial · 跳过教程</button>
+  </div>
+</div>
+
+<!-- ══ GAME SCREEN ══ -->
+<div id="screen-game" class="screen">
+  <div id="game-header">
+    <span id="player-name-display">Player</span>
+    <div id="header-btns">
+      <button onclick="showStats()">📊 Stats</button>
+      <button onclick="openSettingsEntry()">⚙</button>
+      <button onclick="switchProfile()">← Profiles</button>
+      <a href="index.html" style="background:none;border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:5px 12px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;">🏠</a>
+    </div>
+  </div>
+
+  <div id="game-body">
+    <div id="lang-toggle">
+      <button class="lang-btn active" id="lang-en-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="lang-zh-btn" onclick="setLang('zh')">中文</button>
+    </div>
+
+    <div id="stats-strip">
+      <div class="stat-mini"><div class="stat-mini-num" id="s-attempted">0</div><div class="stat-mini-lbl">Attempted<span class="zh">已答题数</span></div></div>
+      <div class="stat-mini"><div class="stat-mini-num" id="s-correct">0</div><div class="stat-mini-lbl">Correct<span class="zh">正确</span></div></div>
+      <div class="stat-mini"><div class="stat-mini-num" id="s-acc">—</div><div class="stat-mini-lbl">Accuracy<span class="zh">正确率</span></div></div>
+    </div>
+
+    <div id="question-card">
+      <div id="question-display"></div>
+      <div id="question-translation"></div>
+    </div>
+
+    <div id="numberline-container">
+      <div id="nl-label"></div>
+      <div id="nl-canvas-wrap" style="touch-action:none;cursor:grab">
+        <canvas id="nl-canvas"></canvas>
+      </div>
+      <div id="nl-instruction"></div>
+      <div id="nl-arrow-controls">
+        <button class="nl-arrow-btn" id="nl-left-btn" onpointerdown="startArrowHold(-1)" onpointerup="stopArrowHold()" onpointerleave="stopArrowHold()">←</button>
+        <div id="nl-arrow-val">—</div>
+        <button class="nl-arrow-btn" id="nl-right-btn" onpointerdown="startArrowHold(1)" onpointerup="stopArrowHold()" onpointerleave="stopArrowHold()">→</button>
+      </div>
+      <div id="nl-arrows-label"></div>
+    </div>
+
+    <div id="answer-section">
+      <div id="answer-row">
+        <input type="number" id="answer-input" placeholder="?" autocomplete="off">
+        <button class="btn btn-primary" id="submit-btn" onclick="submitAnswer()">✓ Check</button>
+      </div>
+      <div id="feedback-box"></div>
+      <button class="btn btn-primary btn-full" id="next-btn" onclick="nextQuestion()">Next → 下一题</button>
+    </div>
+
+
+  </div>
+</div>
+
+<!-- ══ STATS SCREEN ══ -->
+<div id="screen-stats" class="screen">
+  <div id="stats-header">
+    <button class="btn-icon" onclick="showGame()">←</button>
+    <h2>📊 Progress · 学习进度</h2>
+    <button class="btn btn-danger btn-sm" onclick="confirmResetStats()">Reset</button>
+  </div>
+  <div id="stats-body">
+    <div class="stats-overview" id="stats-overview"></div>
+    <div class="card">
+      <div class="card-title">By question type · 按题目类型</div>
+      <div id="type-breakdown"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Level history · 级别历史</div>
+      <div id="level-history"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LEVEL UP OVERLAY ══ -->
+<div id="levelup-overlay">
+  <div id="levelup-card">
+    <div id="levelup-icon">🎉</div>
+    <div id="levelup-title"></div>
+    <div id="levelup-msg"></div>
+    <div id="levelup-msg-zh"></div>
+    <button class="btn btn-primary btn-full" onclick="dismissLevelUp()">Continue · 继续</button>
+  </div>
+</div>
+
+<!-- ══ SETTINGS PIN MODAL ══ -->
+<div class="modal-overlay" id="pin-modal">
+  <div class="modal-box" id="pin-modal-box">
+    <h3>Teacher settings · 教师设置</h3>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:16px">Enter PIN to access settings.<br><span class="zh" style="font-size:13px">输入密码以访问设置。</span></p>
+    <input type="password" id="pin-input-settings" placeholder="••••" maxlength="6" oninput="checkSettingsPin()">
+    <div style="margin-top:10px;font-size:12px;color:var(--text3);text-align:center">Default PIN: 1234</div>
+    <div class="modal-btns" style="justify-content:center">
+      <button class="btn btn-secondary btn-sm" onclick="closePinModal()">Cancel · 取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SETTINGS MODAL ══ -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal-box">
+    <h3>⚙ Settings · 设置</h3>
+    <div class="field">
+      <label>Streak needed to level up · 升级所需连续答对数</label>
+      <input type="number" id="setting-streak" min="3" max="20" value="5">
+    </div>
+    <div class="field">
+      <label>Change PIN · 修改密码</label>
+      <input type="password" id="setting-new-pin" placeholder="New PIN · 新密码" maxlength="6">
+    </div>
+    <div class="field">
+      <label>Set profile level · 设置用户级别</label>
+      <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;gap:8px;align-items:center">
+        <select id="setting-level-profile" style="flex:1;padding:10px 12px;background:var(--surface2);color:var(--text);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;outline:none"></select>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select id="setting-level-type" style="flex:1;padding:10px 12px;background:var(--surface2);color:var(--text);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;outline:none">
+          <option value="all">All types · 所有类型</option>
+        </select>
+        <select id="setting-level-value" style="width:100px;padding:10px 12px;background:var(--surface2);color:var(--text);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;outline:none">
+<option value="1">Level 1</option><option value="2">Level 2</option><option value="3">Level 3</option><option value="4">Level 4</option><option value="5">Level 5</option><option value="6">Level 6</option><option value="7">Level 7</option><option value="8">Level 8</option><option value="9">Level 9</option><option value="10">Level 10</option>
+        </select>
+        <button class="btn btn-secondary btn-sm" onclick="applyLevelChange()">Set</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Delete a profile · 删除用户</label>
+      <select id="setting-delete-profile" style="width:100%;padding:10px 12px;background:var(--surface2);color:var(--text);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;outline:none"></select>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-secondary btn-sm" onclick="closeSettingsModal()">Cancel · 取消</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteSelectedProfile()">Delete profile · 删除用户</button>
+      <button class="btn btn-primary btn-sm" onclick="saveSettings()">Save · 保存</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════
+// DATA & STATE
+// ══════════════════════════════════════
+let appData = {
+  profiles: {},   // {name: {typeLevels:{typeId:level}, typeStreaks:{typeId:streak}, streakNeeded, accuracy:{type:{a,c}}, accuracyByLevel:{level:{type:{a,c}}}, wrongAnswers:{}, levelHistory:[], totalAttempted, totalCorrect}}
+  settings: { streakNeeded: 5, pin: '1234' }
+};
+let currentProfile = null;
+let lang = 'en';
+let currentQ = null;
+let answered = false;
+let sessionAttempted = 0;
+let sessionCorrect = 0;
+let animating = false;
+let settingsPin = '1234';
+
+// Question types
+const Q_TYPES = [
+  { id: 'pos-pos-neg', en: 'Positive − Positive → Negative', zh: '正数 − 正数 → 负数' },
+  { id: 'pos-add-neg', en: 'Positive + Negative', zh: '正数 + 负数' },
+  { id: 'pos-sub-neg', en: 'Positive − Negative', zh: '正数 − 负数' },
+  { id: 'neg-add-pos', en: 'Negative + Positive', zh: '负数 + 正数' },
+  { id: 'neg-sub-pos', en: 'Negative − Positive', zh: '负数 − 正数' },
+  { id: 'neg-add-neg', en: 'Negative + Negative', zh: '负数 + 负数' },
+  { id: 'neg-sub-neg', en: 'Negative − Negative', zh: '负数 − 负数' },
+];
+
+// Level config
+function getRange(level) { return Math.min(level * 10, 100); }
+function getLevelLabel(level) { const r = getRange(level); return `Level ${level} · Level ${level} (±${r})`; }
+
+// Level mode: 1=animation first, 2=numberline no anim, 3=no numberline
+function getMode(level) { return level <= 2 ? 1 : level <= 4 ? 2 : 3; }
+
+// ══════════════════════════════════════
+// PERSISTENCE
+// ══════════════════════════════════════
+function saveData() { localStorage.setItem('integers_app', JSON.stringify(appData)); }
+function loadData() {
+  const raw = localStorage.getItem('integers_app');
+  if (raw) { try { appData = JSON.parse(raw); if (!appData.settings) appData.settings = { streakNeeded:5, pin:'1234' }; } catch(e) {} }
+  settingsPin = appData.settings.pin || '1234';
+}
+
+// ══════════════════════════════════════
+// PROFILE SCREEN
+// ══════════════════════════════════════
+function renderProfiles() {
+  const list = document.getElementById('profile-list');
+  const names = Object.keys(appData.profiles);
+  if (!names.length) {
+    list.innerHTML = `<div style="font-size:14px;color:var(--text3);padding:8px 0;text-align:center">No profiles yet · 暂无用户</div>`;
+    return;
+  }
+  list.innerHTML = names.map(name => {
+    const p = appData.profiles[name];
+    const acc = p.totalAttempted ? Math.round(p.totalCorrect/p.totalAttempted*100) : null;
+    return `<div class="profile-row" onclick="selectProfile('${esc(name)}')">
+      <div class="profile-avatar">${name[0].toUpperCase()}</div>
+      <div class="profile-info">
+        <div class="profile-name">${esc(name)}</div>
+        <div class="profile-meta">${p.totalAttempted||0} questions · ${acc !== null ? acc+'% accuracy' : 'Not started'}</div>
+      </div>
+      <span class="profile-level-badge">L${p.level||1}</span>
+    </div>`;
+  }).join('');
+}
+
+function createProfile() {
+  const name = document.getElementById('new-name-input').value.trim();
+  if (!name) { toast('Please enter a name · 请输入姓名'); return; }
+  if (appData.profiles[name]) { selectProfile(name); return; }
+  const typeStreaks = {}, typeLevels = {};
+  Q_TYPES.forEach(t => { typeStreaks[t.id] = 0; typeLevels[t.id] = 1; });
+  appData.profiles[name] = {
+    typeLevels, typeStreaks,
+    streakNeeded: appData.settings.streakNeeded,
+    accuracy: {}, accuracyByLevel: {}, wrongAnswers: {},
+    levelHistory: [], totalAttempted: 0, totalCorrect: 0
+  };
+  saveData();
+  selectProfile(name);
+}
+
+function selectProfile(name) {
+  currentProfile = name;
+  sessionAttempted = 0; sessionCorrect = 0;
+  const p = appData.profiles[name];
+  if (!p.tutorialDone) {
+    startIntro();
+  } else {
+    showGame();
+    generateQuestion();
+  }
+}
+
+function switchProfile() {
+  currentProfile = null;
+  showScreen('profile');
+  renderProfiles();
+}
+
+
+
+// ══════════════════════════════════════
+// INTRO — WHAT ARE NEGATIVE NUMBERS
+// ══════════════════════════════════════
+let introCorrect = 0;
+let introQ = null;
+let introAnswered = false;
+let introQNum = 0;
+const INTRO_Q_BANK = [
+  { type: 'posneg', num: -7 },
+  { type: 'place',  num:  4 },
+  { type: 'posneg', num:  3 },
+  { type: 'place',  num: -6 },
+  { type: 'posneg', num: -2 },
+  { type: 'place',  num:  8 },
+  { type: 'posneg', num:  5 },
+  { type: 'place',  num: -3 },
+  { type: 'posneg', num: -9 },
+  { type: 'place',  num:  1 },
+];
+let introBankIndex = 0;
+
+const INTRO_RW = [
+  { icon:'🌡️', enTitle:'Temperature', zhTitle:'温度',
+    enPos:'Above 0°C · e.g. +25°C (warm day)', enNeg:'Below 0°C · e.g. −10°C (freezing)',
+    zhPos:'0°C以上 · 例如+25°C（温暖的一天）', zhNeg:'0°C以下 · 例如−10°C（结冰）' },
+  { icon:'🏔️', enTitle:'Elevation', zhTitle:'海拔',
+    enPos:'Above sea level · e.g. +2228m (Mt Kosciuszko)', enNeg:'Below sea level · e.g. −16m (Lake Eyre)',
+    zhPos:'海平面以上 · 例如+2228m（科修斯科山）', zhNeg:'海平面以下 · 例如−16m（艾尔湖）' },
+  { icon:'💰', enTitle:'Money', zhTitle:'金钱',
+    enPos:'Earning money · e.g. +$50', enNeg:'Owing money · e.g. −$20 (debt)',
+    zhPos:'赚钱 · 例如+50元', zhNeg:'欠钱 · 例如−20元（债务）' },
+  { icon:'🏢', enTitle:'Building floors', zhTitle:'楼层',
+    enPos:'Above ground · e.g. Floor 3', enNeg:'Below ground · e.g. −1 (basement)',
+    zhPos:'地面以上 · 例如3楼', zhNeg:'地面以下 · 例如−1楼（地下室）' },
+];
+
+function startIntro() {
+  introCorrect = 0; introAnswered = false; introQNum = 0; introBankIndex = 0;
+  showScreen('intro');
+  renderIntro();
+}
+
+function renderIntro() {
+  // lang buttons
+  document.getElementById('intro-lang-en').classList.toggle('active', lang==='en');
+  document.getElementById('intro-lang-zh').classList.toggle('active', lang==='zh');
+
+  // text 1 — what are negative numbers
+  document.getElementById('intro-text-1').innerHTML = lang==='en'
+    ? `Numbers greater than zero are called <strong style="color:var(--green)">positive</strong>. Numbers less than zero are called <strong style="color:var(--red)">negative</strong>. Zero is neither positive nor negative — it's the dividing point between the two.<span class="zh">大于零的数叫做<strong style="color:var(--green)">正数</strong>。小于零的数叫做<strong style="color:var(--red)">负数</strong>。零既不是正数也不是负数——它是两者之间的分界点。</span>`
+    : `大于零的数叫做<strong style="color:var(--green)">正数</strong>。小于零的数叫做<strong style="color:var(--red)">负数</strong>。零既不是正数也不是负数——它是两者之间的分界点。<span class="zh">Numbers greater than zero are <strong style="color:var(--green)">positive</strong>. Numbers less than zero are <strong style="color:var(--red)">negative</strong>. Zero is the dividing point.</span>`;
+
+  // text 2 — number line
+  document.getElementById('intro-text-2').innerHTML = lang==='en'
+    ? `A number line shows all numbers in order. <strong style="color:var(--green)">Positive numbers</strong> are to the right of zero. <strong style="color:var(--red)">Negative numbers</strong> are to the left. The further from zero, the larger the value (or the more negative).<span class="zh">数轴按顺序显示所有数字。<strong style="color:var(--green)">正数</strong>在零的右边。<strong style="color:var(--red)">负数</strong>在零的左边。距离零越远，值越大（或越负）。</span>`
+    : `数轴按顺序显示所有数字。<strong style="color:var(--green)">正数</strong>在零的右边。<strong style="color:var(--red)">负数</strong>在零的左边。<span class="zh">Positive numbers are to the right. Negative numbers are to the left.</span>`;
+
+  document.getElementById('intro-nl-caption').textContent = lang==='en'
+    ? 'Negative ← — — — 0 — — — → Positive'
+    : '负数 ← — — — 0 — — — → 正数';
+
+  // draw annotated number line
+  setTimeout(drawIntroNumberLine, 50);
+
+  // real world grid
+  document.getElementById('rw-grid').innerHTML = INTRO_RW.map(rw => `
+    <div class="rw-card">
+      <div class="rw-icon">${rw.icon}</div>
+      <div class="rw-title">${rw.enTitle}</div>
+      <div class="rw-title-zh">${rw.zhTitle}</div>
+      <div class="rw-pos">+ ${rw.enPos}</div>
+      <div class="rw-neg" style="margin-bottom:4px">− ${rw.enNeg}</div>
+      <div class="rw-pos" style="font-family:'Noto Sans SC',sans-serif">+ ${rw.zhPos}</div>
+      <div class="rw-neg" style="font-family:'Noto Sans SC',sans-serif">− ${rw.zhNeg}</div>
+    </div>`).join('');
+
+  // check title
+  document.getElementById('intro-check-title').textContent = lang==='en'
+    ? 'Check your understanding' : '检验理解';
+  document.getElementById('intro-check-subtitle').textContent = lang==='en'
+    ? 'Answer 5 questions correctly to continue · 答对5题才能继续'
+    : '答对5题才能继续 · Answer 5 questions correctly to continue';
+
+  generateIntroQuestion();
+}
+
+function drawIntroNumberLine() {
+  const canvas = document.getElementById('intro-nl-canvas');
+  if (!canvas) return;
+  const wrap = canvas.parentElement;
+  canvas.width = wrap.clientWidth * window.devicePixelRatio;
+  canvas.height = 80 * window.devicePixelRatio;
+  canvas.style.width = wrap.clientWidth + 'px';
+  canvas.style.height = '80px';
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio;
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+  const { pad, lineY, lineW, steps } = drawNumberLineBase(ctx, -10, 10, w, h, dpr);
+
+  // shade negative side red, positive side green
+  const zeroX = pad + (10/20)*lineW;
+  ctx.fillStyle = 'rgba(255,107,107,0.08)';
+  ctx.fillRect(pad, lineY-18*dpr, zeroX-pad, 36*dpr);
+  ctx.fillStyle = 'rgba(74,222,128,0.08)';
+  ctx.fillRect(zeroX, lineY-18*dpr, (w-pad)-zeroX, 36*dpr);
+
+  // labels
+  ctx.font = `bold ${10*dpr}px DM Sans`;
+  ctx.fillStyle = 'rgba(255,107,107,0.7)';
+  ctx.textAlign = 'center';
+  ctx.fillText(lang==='en'?'NEGATIVE':'负数', pad + (zeroX-pad)/2, lineY - 24*dpr);
+  ctx.fillStyle = 'rgba(74,222,128,0.7)';
+  ctx.fillText(lang==='en'?'POSITIVE':'正数', zeroX + ((w-pad)-zeroX)/2, lineY - 24*dpr);
+}
+
+function generateIntroQuestion() {
+  introAnswered = false;
+  introQNum++;
+  document.getElementById('intro-check-feedback').textContent = '';
+  document.getElementById('intro-check-feedback').className = 'intro-check-feedback';
+
+  // draw from hardcoded bank, cycling if needed
+  const q = INTRO_Q_BANK[introBankIndex % INTRO_Q_BANK.length];
+  introBankIndex++;
+  introQ = { type: q.type, num: q.num };
+  const { type, num } = introQ;
+
+  if (type === 'posneg') {
+    document.getElementById('intro-check-body').innerHTML = `
+      <div class="intro-number-display" style="color:var(--text)">${num}</div>
+      <div class="intro-tap-hint" style="margin-bottom:8px">${lang==='en'?'Is this number positive or negative? · 这个数是正数还是负数？':'这个数是正数还是负数？ · Is this number positive or negative?'}</div>
+      <div class="posneg-btns">
+        <button class="posneg-btn pos" onclick="submitIntroPosneg('positive')">✚ ${lang==='en'?'Positive':'正数'}</button>
+        <button class="posneg-btn neg" onclick="submitIntroPosneg('negative')">− ${lang==='en'?'Negative':'负数'}</button>
+      </div>`;
+  } else {
+    document.getElementById('intro-check-body').innerHTML = `
+      <div class="intro-number-display" style="color:${num>0?'var(--green)':'var(--red)'}">${num}</div>
+      <div class="intro-tap-hint">${lang==='en'?`Tap where ${num} is on the number line · 点击数轴上${num}的位置`:`点击数轴上 ${num} 的位置 · Tap where ${num} is on the number line`}</div>
+      <div class="intro-nl-tap-wrap"><canvas id="intro-tap-nl"></canvas></div>`;
+    setTimeout(() => {
+      setupTapNumberLine();
+      document.getElementById('intro-tap-nl').onclick = handleTapNumberLine;
+    }, 50);
+  }
+}
+
+function setupTapNumberLine() {
+  const canvas = document.getElementById('intro-tap-nl');
+  if (!canvas) return;
+  const wrap = canvas.parentElement;
+  canvas.width = wrap.clientWidth * window.devicePixelRatio;
+  canvas.height = 80 * window.devicePixelRatio;
+  canvas.style.width = wrap.clientWidth + 'px';
+  canvas.style.height = '80px';
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  drawNumberLineBase(ctx, -10, 10, canvas.width, canvas.height, dpr);
+}
+
+function handleTapNumberLine(e) {
+  if (introAnswered) return;
+  const canvas = document.getElementById('intro-tap-nl');
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio;
+  const w = canvas.width, h = canvas.height;
+  const clickX = (e.clientX - rect.left) * dpr;
+  const pad = 40 * dpr;
+  const lineW = w - pad*2;
+  // map click to number
+  const frac = (clickX - pad) / lineW;
+  const tapped = Math.round(-10 + frac * 20);
+  const correct = tapped === introQ.num;
+
+  // draw tap dot
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,w,h);
+  drawNumberLineBase(ctx, -10, 10, w, h, dpr);
+  const tapX = pad + ((tapped - (-10))/20)*lineW;
+  const lineY = h * 0.55;
+  ctx.fillStyle = correct ? '#4ade80' : '#ff6b6b';
+  ctx.beginPath(); ctx.arc(tapX, lineY, 8*dpr, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.font = `bold ${11*dpr}px DM Sans`;
+  ctx.textAlign = 'center';
+  ctx.fillText(tapped, tapX, lineY - 14*dpr);
+
+  // if wrong, also show correct
+  if (!correct) {
+    const correctX = pad + ((introQ.num - (-10))/20)*lineW;
+    ctx.fillStyle = '#4ade80';
+    ctx.beginPath(); ctx.arc(correctX, lineY, 8*dpr, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.fillText(introQ.num, correctX, lineY - 14*dpr);
+  }
+
+  handleIntroResult(correct);
+}
+
+function submitIntroPosneg(choice) {
+  if (introAnswered) return;
+  const correct = (choice === 'positive') === (introQ.num > 0);
+  handleIntroResult(correct);
+}
+
+function handleIntroResult(correct) {
+  introAnswered = true;
+  const fb = document.getElementById('intro-check-feedback');
+  if (correct) {
+    introCorrect++;
+    fb.className = 'intro-check-feedback correct';
+    fb.textContent = lang==='en' ? 'Correct! ✓ · 正确！' : '正确！✓ · Correct!';
+    document.getElementById('intro-progress-bar').style.width = (introCorrect/5*100)+'%';
+    document.getElementById('intro-check-progress').textContent = `${introCorrect} / 5 ✓`;
+  } else {
+    fb.className = 'intro-check-feedback wrong';
+    fb.textContent = lang==='en'
+      ? `Not quite — ${introQ.num} is ${introQ.num>0?'positive':'negative'} · ${introQ.num}是${introQ.num>0?'正数':'负数'}`
+      : `${introQ.num}是${introQ.num>0?'正数':'负数'} · ${introQ.num} is ${introQ.num>0?'positive':'negative'}`;
+  }
+
+  if (introCorrect >= 5) {
+    document.getElementById('intro-continue-btn').style.display = '';
+  } else {
+    setTimeout(generateIntroQuestion, correct ? 700 : 1400);
+  }
+}
+
+function introFinish() {
+  tutStep = 0; tutCorrect = 0; tutAnswered = false;
+  showScreen('tutorial');
+  renderTutStep();
+}
+
+
+// ══════════════════════════════════════
+// SEEDED TUTORIAL QUESTION BANKS
+// ══════════════════════════════════════
+function buildTutBanks() {
+  const banks = {};
+
+  // pos-pos-neg: a > 0, b > 0, a - b < 0 → b > a
+  banks['pos-pos-neg'] = [];
+  for (let a = 1; a <= 9; a++)
+    for (let b = a+1; b <= 10; b++)
+      banks['pos-pos-neg'].push({ a, b, op:'−', answer:a-b, displayA:String(a), displayB:String(b) });
+
+  // pos-add-neg: a > 0, b > 0, result = a + (−b) = a - b
+  banks['pos-add-neg'] = [];
+  for (let a = 1; a <= 10; a++)
+    for (let b = 1; b <= 10; b++)
+      if (a !== b) // avoid 0 result
+        banks['pos-add-neg'].push({ a, b:-b, op:'+', answer:a-b, displayA:String(a), displayB:`(−${b})` });
+
+  // pos-sub-neg: a > 0, b > 0, result = a - (−b) = a + b
+  banks['pos-sub-neg'] = [];
+  for (let a = 1; a <= 9; a++)
+    for (let b = 1; b <= 10; b++)
+      if (a + b <= 10) // keep answers in a reasonable range
+        banks['pos-sub-neg'].push({ a, b:-b, op:'−', answer:a+b, displayA:String(a), displayB:`(−${b})` });
+
+  // neg-add-pos: a < 0, b > 0, result = a + b
+  banks['neg-add-pos'] = [];
+  for (let a = 1; a <= 10; a++)
+    for (let b = 1; b <= 10; b++)
+      if (a !== b) // avoid 0 result
+        banks['neg-add-pos'].push({ a:-a, b, op:'+', answer:-a+b, displayA:`(−${a})`, displayB:String(b) });
+
+  // neg-sub-pos: a < 0, b > 0, result = a - b (more negative)
+  banks['neg-sub-pos'] = [];
+  for (let a = 1; a <= 9; a++)
+    for (let b = 1; b <= 10; b++)
+      if (-a - b >= -10)
+        banks['neg-sub-pos'].push({ a:-a, b, op:'−', answer:-a-b, displayA:`(−${a})`, displayB:String(b) });
+
+  // neg-add-neg: both negative, result = -(a+b)
+  banks['neg-add-neg'] = [];
+  for (let a = 1; a <= 9; a++)
+    for (let b = 1; b <= 10; b++)
+      if (a + b <= 10)
+        banks['neg-add-neg'].push({ a:-a, b:-b, op:'+', answer:-a-b, displayA:`(−${a})`, displayB:`(−${b})` });
+
+  // neg-sub-neg: a < 0, b < 0, result = a - (−b) = a + b = -a_val + b_val
+  banks['neg-sub-neg'] = [];
+  for (let a = 1; a <= 10; a++)
+    for (let b = 1; b <= 10; b++)
+      if (a !== b) // avoid 0 result
+        banks['neg-sub-neg'].push({ a:-a, b:-b, op:'−', answer:-a+b, displayA:`(−${a})`, displayB:`(−${b})` });
+
+  // Shuffle each bank
+  Object.keys(banks).forEach(k => {
+    banks[k] = banks[k].sort(() => Math.random() - 0.5);
+  });
+  return banks;
+}
+
+let tutBanks = null;
+let tutBankIndices = {};
+
+function getTutQuestion(typeId) {
+  if (!tutBanks) tutBanks = buildTutBanks();
+  if (tutBankIndices[typeId] === undefined) tutBankIndices[typeId] = 0;
+  const bank = tutBanks[typeId];
+  if (!bank || !bank.length) return null;
+  // cycle through bank, reshuffle on wraparound
+  if (tutBankIndices[typeId] >= bank.length) {
+    tutBanks[typeId] = bank.sort(() => Math.random() - 0.5);
+    tutBankIndices[typeId] = 0;
+  }
+  return bank[tutBankIndices[typeId]++];
+}
+
+// ══════════════════════════════════════
+// TUTORIAL
+// ══════════════════════════════════════
+const TUT_CONCEPTS = [
+  {
+    type: Q_TYPES[0], // pos-pos-neg
+    enExplanation: 'When you subtract a bigger number from a smaller one, you go past zero and get a negative answer. On the number line, start at the first number and jump LEFT by the amount you subtract.',
+    zhExplanation: '当你用小数减大数时，会越过零点得到负数。在数轴上，从第一个数出发，向左跳跃所减去的数量。',
+    example: { a: 3, b: 5, op: '−', answer: -2, displayA: '3', displayB: '5' },
+  },
+  {
+    type: Q_TYPES[1], // pos-add-neg
+    enExplanation: 'Adding a negative number is the same as subtracting. On the number line, start at the positive number and jump LEFT by the size of the negative number.',
+    zhExplanation: '加一个负数等同于减法。在数轴上，从正数出发，向左跳跃负数的大小。',
+    example: { a: 6, b: -3, op: '+', answer: 3, displayA: '6', displayB: '(−3)' },
+  },
+  {
+    type: Q_TYPES[2], // pos-sub-neg
+    enExplanation: 'Subtracting a negative number is the same as adding. Two negatives make a positive! On the number line, jump RIGHT.',
+    zhExplanation: '减去一个负数等同于加法。两个负号相消变成正号！在数轴上，向右跳跃。',
+    example: { a: 4, b: -2, op: '−', answer: 6, displayA: '4', displayB: '(−2)' },
+  },
+  {
+    type: Q_TYPES[3], // neg-add-pos
+    enExplanation: 'Starting from a negative number and adding a positive number moves you RIGHT on the number line, toward zero and beyond.',
+    zhExplanation: '从负数出发，加上正数，在数轴上向右移动，朝零点方向前进。',
+    example: { a: -4, b: 7, op: '+', answer: 3, displayA: '(−4)', displayB: '7' },
+  },
+  {
+    type: Q_TYPES[4], // neg-sub-pos
+    enExplanation: 'Starting from a negative number and subtracting moves you even further LEFT — deeper into the negatives.',
+    zhExplanation: '从负数出发，再减去正数，在数轴上继续向左移动，进入更大的负数区域。',
+    example: { a: -3, b: 4, op: '−', answer: -7, displayA: '(−3)', displayB: '4' },
+  },
+  {
+    type: Q_TYPES[5], // neg-add-neg
+    enExplanation: 'Adding two negative numbers gives a bigger negative. Both numbers pull you LEFT on the number line.',
+    zhExplanation: '两个负数相加得到绝对值更大的负数。两个数都把你向左拉。',
+    example: { a: -3, b: -4, op: '+', answer: -7, displayA: '(−3)', displayB: '(−4)' },
+  },
+  {
+    type: Q_TYPES[6], // neg-sub-neg
+    enExplanation: 'Subtracting a negative from a negative: flip the sign of what you subtract, then add. It can make the result less negative or even positive!',
+    zhExplanation: '负数减负数：将被减数的符号翻转后相加。结果可能变得没那么负，甚至变成正数！',
+    example: { a: -5, b: -3, op: '−', answer: -2, displayA: '(−5)', displayB: '(−3)' },
+  },
+];
+
+let tutStep = 0;
+let tutCorrect = 0;
+let tutAnswered = false;
+let tutCurrentQ = null;
+
+function startTutorial() {
+  tutStep = 0; tutCorrect = 0; tutAnswered = false;
+  tutBanks = buildTutBanks(); tutBankIndices = {};
+  showScreen('tutorial');
+  renderTutStep();
+}
+
+function tutSkip() {
+  if (!confirm('Skip and go straight to practice? · 跳过并直接练习？')) return;
+  if (!currentProfile || !appData.profiles[currentProfile]) {
+    showScreen('profile'); renderProfiles(); return;
+  }
+  const p = appData.profiles[currentProfile];
+  p.tutorialDone = true;
+  saveData();
+  showGame();
+  generateQuestion();
+}
+
+function tutFinish() {
+  const p = appData.profiles[currentProfile];
+  p.tutorialDone = true;
+  saveData();
+  showGame();
+  generateQuestion();
+}
+
+function renderTutStep() {
+  const c = TUT_CONCEPTS[tutStep];
+  tutCorrect = 0; tutAnswered = false;
+
+  // update lang buttons
+  document.getElementById('tut-lang-en').classList.toggle('active', lang==='en');
+  document.getElementById('tut-lang-zh').classList.toggle('active', lang==='zh');
+
+  // overall progress
+  document.getElementById('tut-overall-progress').textContent =
+    `Type ${tutStep+1} of ${TUT_CONCEPTS.length} · 第${tutStep+1}/${TUT_CONCEPTS.length}类`;
+
+  // step dots
+  document.getElementById('tut-steps').innerHTML = TUT_CONCEPTS.map((_, i) =>
+    `<div class="tut-step-dot ${i<tutStep?'done':i===tutStep?'current':''}">${i<tutStep?'✓':i+1}</div>`
+  ).join('');
+
+  // concept card
+  document.getElementById('tut-concept').innerHTML = `
+    <div class="tut-type-label">${c.type.en}</div>
+    <div class="tut-type-zh">${c.type.zh}</div>
+    <div class="tut-explanation">
+      ${lang==='en' ? c.enExplanation : c.zhExplanation}
+      <span class="zh">${lang==='en' ? c.zhExplanation : c.enExplanation}</span>
+    </div>
+    <div class="tut-example">${c.example.displayA} ${c.example.op} ${c.example.displayB} = ${c.example.answer}</div>
+    <div class="tut-example-zh">${lang==='en'?'Example · 例题':'例题 · Example'}</div>
+  `;
+
+  // demo number line
+  document.getElementById('tut-nl-label').textContent = lang==='en'
+    ? 'Watch the animation · 观看动画演示'
+    : '观看动画演示 · Watch the animation';
+  setupTutNumberLine();
+  setTimeout(() => {
+    const ex = c.example;
+    const change = ex.answer - ex.a;
+    animateTutNumberLine(ex.a, change, ex.answer);
+  }, 500);
+
+  // practice
+  document.getElementById('tut-practice-title').textContent = lang==='en'
+    ? 'Practice — get 5 correct to continue · 练习 — 答对5题才能继续'
+    : '练习 — 答对5题才能继续 · Practice — get 5 correct to continue';
+  document.getElementById('tut-next-btn').style.display = 'none';
+  document.getElementById('tut-finish-btn').style.display = 'none';
+  generateTutQuestion(c.type);
+  setTimeout(drawTutPracticeNumberLine, 100);
+}
+
+function setupTutNumberLine() {
+  const canvas = document.getElementById('tut-nl-canvas');
+  const wrap = document.getElementById('tut-nl-wrap');
+  canvas.width = wrap.clientWidth * window.devicePixelRatio;
+  canvas.height = 80 * window.devicePixelRatio;
+  canvas.style.width = wrap.clientWidth + 'px';
+  canvas.style.height = '80px';
+}
+
+function animateTutNumberLine(startVal, change, endVal) {
+  const canvas = document.getElementById('tut-nl-canvas');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio;
+  const w = canvas.width, h = canvas.height;
+  const maxVal = Math.ceil(Math.max(Math.abs(startVal), Math.abs(endVal), 5) / 5) * 5;
+  const min = -maxVal, max = maxVal;
+
+  let frame = 0;
+  const totalFrames = 70;
+
+  function drawFrame() {
+    ctx.clearRect(0,0,w,h);
+    const { pad, lineY, lineW, steps } = drawNumberLineBase(ctx, min, max, w, h, dpr);
+    const startX = pad + ((startVal - min)/steps)*lineW;
+    const endX = pad + ((endVal - min)/steps)*lineW;
+
+    const prog = Math.min(frame/totalFrames, 1);
+    const ease = 1 - Math.pow(1-prog, 3);
+    const curX = startX + (endX - startX) * ease;
+
+    ctx.strokeStyle = change >= 0 ? '#4ade80' : '#ff6b6b';
+    ctx.lineWidth = 2.5*dpr;
+    const arcH = Math.abs(endX-startX)*0.35;
+    ctx.beginPath();
+    ctx.moveTo(startX, lineY);
+    ctx.quadraticCurveTo((startX+curX)/2, lineY-arcH, curX, lineY);
+    ctx.stroke();
+
+    if (prog > 0.85) {
+      const dir = endX > startX ? 1 : -1;
+      ctx.fillStyle = change >= 0 ? '#4ade80' : '#ff6b6b';
+      ctx.beginPath();
+      ctx.moveTo(curX, lineY);
+      ctx.lineTo(curX - dir*8*dpr, lineY-5*dpr);
+      ctx.lineTo(curX - dir*8*dpr, lineY+5*dpr);
+      ctx.fill();
+    }
+
+    ctx.fillStyle = '#5b8cff';
+    ctx.beginPath(); ctx.arc(startX, lineY, 7*dpr, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(curX, lineY, 6*dpr, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#5b8cff';
+    ctx.font = `bold ${11*dpr}px DM Sans`;
+    ctx.textAlign = 'center';
+    ctx.fillText(startVal, startX, lineY-16*dpr);
+
+    if (prog >= 1) {
+      ctx.fillStyle = change >= 0 ? '#4ade80' : '#ff6b6b';
+      ctx.beginPath(); ctx.arc(endX, lineY, 8*dpr, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = `bold ${12*dpr}px DM Sans`;
+      ctx.fillText(endVal, endX, lineY-18*dpr);
+      document.getElementById('tut-nl-instruction').innerHTML = lang==='en'
+        ? `Started at <strong>${startVal}</strong>, moved <strong>${change>0?'+':''}${change}</strong>, landed on <strong>${endVal}</strong>.<br><span class="zh">从 <strong>${startVal}</strong> 出发，移动了 <strong>${change>0?'+':''}${change}</strong>，到达 <strong>${endVal}</strong>。</span>`
+        : `从 <strong>${startVal}</strong> 出发，移动了 <strong>${change>0?'+':''}${change}</strong>，到达 <strong>${endVal}</strong>。<br><span class="zh">Started at <strong>${startVal}</strong>, moved <strong>${change>0?'+':''}${change}</strong>, landed on <strong>${endVal}</strong>.</span>`;
+      return;
+    }
+    frame++;
+    requestAnimationFrame(drawFrame);
+  }
+  requestAnimationFrame(drawFrame);
+}
+
+
+// ── Draggable practice number line state ──
+let tutNLDragging = false;
+let tutNLDragVal = null;
+
+function drawTutPracticeNumberLine() {
+  const canvas = document.getElementById('tut-practice-nl');
+  if (!canvas || !tutCurrentQ) return;
+  const wrap = canvas.parentElement;
+  const dpr = window.devicePixelRatio;
+  canvas.width = wrap.clientWidth * dpr;
+  canvas.height = 90 * dpr;
+  canvas.style.width = wrap.clientWidth + 'px';
+  canvas.style.height = '90px';
+
+  // Set up drag events (remove old ones first)
+  canvas.onmousedown = tutNLStartDrag;
+  canvas.ontouchstart = tutNLStartDrag;
+
+  tutNLDragVal = null;
+  renderTutPracticeNL(canvas);
+
+  document.getElementById('tut-practice-nl-label').textContent = lang==='en'
+    ? `Drag the white dot to work out the answer · 拖动白点计算答案`
+    : `拖动白点计算答案 · Drag the white dot to work out the answer`;
+}
+
+function renderTutPracticeNL(canvas, dragX) {
+  if (!canvas || !tutCurrentQ) return;
+  const dpr = window.devicePixelRatio;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+
+  const startVal = tutCurrentQ.a;
+  const autoRange = Math.ceil(Math.max(Math.abs(startVal), 5) / 5) * 5;
+  const min = -autoRange, max = autoRange;
+  const range = max - min;
+
+  const { pad, lineY, lineW, steps } = drawNumberLineBase(ctx, min, max, w, h, dpr);
+  const startX = pad + ((startVal - min) / range) * lineW;
+
+  // draw arc from start to drag position if dragging
+  if (dragX !== undefined) {
+    const clampedX = Math.max(pad, Math.min(w - pad, dragX));
+    const dragFrac = (clampedX - pad) / lineW;
+    const dragVal = Math.round(min + dragFrac * range);
+    tutNLDragVal = dragVal;
+
+    // draw arc
+    const positive = clampedX >= startX;
+    ctx.strokeStyle = positive ? '#4ade80' : '#ff6b6b';
+    ctx.lineWidth = 2 * dpr;
+    ctx.setLineDash([4*dpr, 3*dpr]);
+    const arcH = Math.abs(clampedX - startX) * 0.4;
+    ctx.beginPath();
+    ctx.moveTo(startX, lineY);
+    ctx.quadraticCurveTo((startX+clampedX)/2, lineY - Math.max(arcH, 8*dpr), clampedX, lineY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // drag dot (white, moveable)
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(clampedX, lineY, 9*dpr, 0, Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = positive ? '#4ade80' : '#ff6b6b';
+    ctx.lineWidth = 2*dpr;
+    ctx.stroke();
+
+    // drag value label
+    ctx.fillStyle = '#fff';
+    ctx.font = `bold ${12*dpr}px DM Sans`;
+    ctx.textAlign = 'center';
+    ctx.fillText(dragVal, clampedX, lineY - 18*dpr);
+  } else {
+    // white dot at start position as hint
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.beginPath();
+    ctx.arc(startX, lineY, 9*dpr, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  // start dot (blue, fixed)
+  ctx.fillStyle = '#5b8cff';
+  ctx.beginPath();
+  ctx.arc(startX, lineY, 7*dpr, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = '#5b8cff';
+  ctx.font = `bold ${11*dpr}px DM Sans`;
+  ctx.textAlign = 'center';
+  ctx.fillText(startVal, startX, lineY - 14*dpr);
+}
+
+function tutNLStartDrag(e) {
+  if (tutAnswered) return;
+  tutNLDragging = true;
+  const canvas = document.getElementById('tut-practice-nl');
+
+  const moveFn = (ev) => {
+    if (!tutNLDragging) return;
+    const rect = canvas.getBoundingClientRect();
+    const clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
+    const dpr = window.devicePixelRatio;
+    const dragX = (clientX - rect.left) * dpr;
+    renderTutPracticeNL(canvas, dragX);
+    // update label with current dragged value
+    const lbl = document.getElementById('tut-practice-nl-label');
+    if (tutNLDragVal !== null) {
+      lbl.textContent = lang==='en'
+        ? `Working: ${tutCurrentQ.a} → ${tutNLDragVal} · 正在计算：${tutCurrentQ.a} → ${tutNLDragVal}`
+        : `正在计算：${tutCurrentQ.a} → ${tutNLDragVal} · Working: ${tutCurrentQ.a} → ${tutNLDragVal}`;
+    }
+  };
+
+  const endFn = () => {
+    tutNLDragging = false;
+    document.removeEventListener('mousemove', moveFn);
+    document.removeEventListener('mouseup', endFn);
+    document.removeEventListener('touchmove', moveFn);
+    document.removeEventListener('touchend', endFn);
+    // drag released — do not auto-fill answer
+  };
+
+  document.addEventListener('mousemove', moveFn);
+  document.addEventListener('mouseup', endFn);
+  document.addEventListener('touchmove', moveFn, { passive: true });
+  document.addEventListener('touchend', endFn);
+  moveFn(e);
+}
+
+function generateTutQuestion(type) {
+  const q = getTutQuestion(type.id);
+  if (!q) return;
+  tutCurrentQ = { a: q.a, b: q.b, op: q.op, answer: q.answer, type, displayA: q.displayA, displayB: q.displayB };
+  document.getElementById('tut-question').textContent = `${q.displayA} ${q.op} ${q.displayB} = ?`;
+  document.getElementById('tut-answer').value = '';
+  document.getElementById('tut-answer').disabled = false;
+  document.getElementById('tut-feedback').textContent = '';
+  document.getElementById('tut-feedback').className = 'tut-feedback';
+  tutAnswered = false;
+  setTimeout(() => { drawTutPracticeNumberLine(); showTutArrowControls(); document.getElementById('tut-answer').focus(); }, 50);
+}
+
+function tutSubmit() {
+  if (tutAnswered) return;
+  const val = parseInt(document.getElementById('tut-answer').value);
+  if (isNaN(val)) { toast(lang==='en'?'Enter a number · 请输入数字':'请输入数字'); return; }
+  tutAnswered = true;
+
+  const correct = val === tutCurrentQ.answer;
+  const fb = document.getElementById('tut-feedback');
+
+  if (correct) {
+    tutCorrect++;
+    fb.className = 'tut-feedback correct';
+    fb.textContent = lang==='en' ? `Correct! ✓ · 正确！` : `正确！✓ · Correct!`;
+    document.getElementById('tut-progress-bar').style.width = (tutCorrect/5*100)+'%';
+    document.getElementById('tut-correct-badge').textContent = `${tutCorrect} / 5 ✓`;
+  } else {
+    fb.className = 'tut-feedback wrong';
+    fb.textContent = lang==='en'
+      ? `Not quite — the answer is ${tutCurrentQ.answer} · 答案是 ${tutCurrentQ.answer}`
+      : `答案是 ${tutCurrentQ.answer} · The answer is ${tutCurrentQ.answer}`;
+  }
+
+  if (tutCorrect >= 5) {
+    document.getElementById('tut-answer').disabled = true;
+    // show next/finish button
+    if (tutStep < TUT_CONCEPTS.length - 1) {
+      document.getElementById('tut-next-btn').style.display = '';
+    } else {
+      document.getElementById('tut-finish-btn').style.display = '';
+    }
+  } else {
+    setTimeout(() => {
+      generateTutQuestion(tutCurrentQ.type);
+    }, correct ? 600 : 1200);
+  }
+}
+
+function tutNextStep() {
+  tutStep++;
+  tutCorrect = 0;
+  document.getElementById('tut-correct-badge').textContent = `0 / 5 ✓`;
+  document.getElementById('tut-progress-bar').style.width = '0%';
+  renderTutStep();
+  document.getElementById('tut-body').scrollTop = 0;
+}
+
+// ══════════════════════════════════════
+// QUESTION GENERATION
+// ══════════════════════════════════════
+function getTypeLevel(p, typeId) {
+  if (!p.typeLevels) return 1;
+  return p.typeLevels[typeId] || 1;
+}
+function getTypeStreak(p, typeId) {
+  if (!p.typeStreaks) return 0;
+  return p.typeStreaks[typeId] || 0;
+}
+
+function generateQuestion() {
+  const p = appData.profiles[currentProfile];
+
+  // Pick random type, weight toward lower level types
+  const typeWeights = Q_TYPES.map(t => {
+    const lvl = getTypeLevel(p, t.id);
+    const a = p.accuracy[t.id];
+    const acc = a && a.a > 0 ? a.c / a.a : 0.5;
+    // lower level and lower accuracy = higher weight
+    return { t, w: (1 - acc * 0.4) * (1 + (10 - lvl) * 0.1) };
+  });
+  const totalW = typeWeights.reduce((s,x) => s+x.w, 0);
+  let r = Math.random() * totalW;
+  let type = typeWeights[typeWeights.length-1].t;
+  for (const {t, w} of typeWeights) { r -= w; if (r <= 0) { type = t; break; } }
+
+  const typeLevel = getTypeLevel(p, type.id);
+  const range = getRange(typeLevel);
+  const mode = getMode(typeLevel);
+
+  let a, b, op, answer;
+  const rInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+  switch(type.id) {
+    case 'pos-pos-neg':
+      // pick answer first (negative result), then find a and b
+      answer = -rInt(1, range);           // answer is e.g. -7
+      a = rInt(1, range - 1);             // a is positive, smaller
+      b = a - answer;                     // b = a + |answer|, guaranteed > a
+      if (b > range * 2) { a = 1; b = 1 - answer; } // clamp if too big
+      op = '−'; break;
+    case 'pos-add-neg':
+      a = rInt(1, range); b = rInt(1, range);
+      op = '+'; answer = a + (-b);
+      currentQ = { a, b: -b, op, answer, type, mode, range, displayB: `(−${b})` };
+      updateUI(); return;
+    case 'pos-sub-neg':
+      a = rInt(1, range); b = rInt(1, range);
+      op = '−'; answer = a - (-b);
+      currentQ = { a, b: -b, op, answer, type, mode, range, displayB: `(−${b})` };
+      updateUI(); return;
+    case 'neg-add-pos':
+      a = rInt(1, range); b = rInt(1, range);
+      op = '+'; answer = -a + b;
+      currentQ = { a: -a, b, op, answer, type, mode, range };
+      updateUI(); return;
+    case 'neg-sub-pos':
+      a = rInt(1, range); b = rInt(1, range);
+      op = '−'; answer = -a - b;
+      currentQ = { a: -a, b, op, answer, type, mode, range };
+      updateUI(); return;
+    case 'neg-add-neg':
+      a = rInt(1, range); b = rInt(1, range);
+      op = '+'; answer = -a + (-b);
+      currentQ = { a: -a, b: -b, op, answer, type, mode, range, displayB: `(−${b})` };
+      updateUI(); return;
+    case 'neg-sub-neg':
+      a = rInt(1, range); b = rInt(1, range);
+      op = '−'; answer = -a - (-b);
+      currentQ = { a: -a, b: -b, op, answer, type, mode, range, displayB: `(−${b})` };
+      updateUI(); return;
+  }
+  currentQ = { a, b, op, answer, type, mode, range };
+  updateUI();
+}
+
+// ══════════════════════════════════════
+// UI UPDATE
+// ══════════════════════════════════════
+function updateUI() {
+  const p = appData.profiles[currentProfile];
+  answered = false;
+
+  // Header
+  document.getElementById('player-name-display').textContent = currentProfile;
+
+  // Level mode label
+  const modeLabels = {
+    1: { en: 'Level 1–2 · Animation shown first', zh: '第1–2级 · 先播放动画' },
+    2: { en: 'Level 3–4 · Number line, no animation', zh: '第3–4级 · 显示数轴，无动画' },
+    3: { en: 'Level 5+ · No number line until after', zh: '第5级以上 · 答题后显示数轴' },
+  };
+  const ml = modeLabels[currentQ.mode];
+  document.getElementById('level-mode-label').textContent = lang === 'en' ? ml.en : ml.zh;
+
+  // Question
+  const aStr = currentQ.a < 0 ? `(${currentQ.a})` : String(currentQ.a);
+  const bStr = currentQ.displayB || (currentQ.b < 0 ? `(${currentQ.b})` : String(currentQ.b));
+  document.getElementById('question-display').textContent = `${aStr} ${currentQ.op} ${bStr} = ?`;
+
+  // Translation
+  updateQuestionTranslation();
+
+  // Answer input
+  const inp = document.getElementById('answer-input');
+  inp.value = ''; inp.disabled = false;
+  document.getElementById('submit-btn').style.display = '';
+  document.getElementById('feedback-box').className = '';
+  document.getElementById('feedback-box').innerHTML = '';
+  document.getElementById('next-btn').classList.remove('visible');
+
+  // Number line
+  const nlContainer = document.getElementById('numberline-container');
+  if (currentQ.mode === 1) {
+    nlContainer.classList.add('visible');
+    setupNumberLine();
+    setTimeout(() => {
+      animateNumberLine(currentQ.a, currentQ.b, currentQ.answer, currentQ.range, false);
+      initMainNLDrag();
+      showArrowControls();
+    }, 400);
+  } else if (currentQ.mode === 2) {
+    nlContainer.classList.add('visible');
+    setupNumberLine();
+    drawNumberLineStatic(currentQ.a, currentQ.range);
+    initMainNLDrag();
+    showArrowControls();
+  } else {
+    // mode 3 — show arrows only (no number line until wrong)
+    showArrowControls();
+    nlContainer.classList.remove('visible');
+    clearCanvas();
+  }
+
+  // Progress
+  updateStats();
+  inp.focus();
+}
+
+function updateQuestionTranslation() {
+  const type = currentQ.type;
+  const el = document.getElementById('question-translation');
+  if (lang === 'en') {
+    el.innerHTML = `<span>${type.en}</span>`;
+  } else {
+    el.innerHTML = `<span class="zh">${type.zh}</span>`;
+  }
+}
+
+function setLang(l) {
+  lang = l;
+  document.getElementById('lang-en-btn').classList.toggle('active', l === 'en');
+  document.getElementById('lang-zh-btn').classList.toggle('active', l === 'zh');
+  if (currentQ) updateQuestionTranslation();
+  updateStats();
+  // update nl label
+  if (currentQ) {
+    const labels = {
+      en: 'Number line · Start from the first number, then move right (+) or left (−)',
+      zh: '数轴 · 从第一个数出发，向右移动（+）或向左移动（−）'
+    };
+    document.getElementById('nl-label').textContent = labels[lang];
+  }
+}
+
+function updateStreakBadge() {
+  const p = appData.profiles[currentProfile];
+  const badge = document.getElementById('streak-badge');
+  if (p.streak >= 2) { badge.classList.add('visible'); badge.textContent = `🔥 ${p.streak}`; }
+  else badge.classList.remove('visible');
+}
+
+function updateProgress() {
+  const p = appData.profiles[currentProfile];
+  const streakNeeded = p.streakNeeded || appData.settings.streakNeeded;
+  const pct = Math.min(p.streak / streakNeeded * 100, 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  const left = lang === 'en' ? `Level ${p.level}` : `第${p.level}级`;
+  const right = lang === 'en' ? `Level ${p.level+1}` : `第${p.level+1}级`;
+  document.getElementById('progress-label').innerHTML = `<span>${left}</span><span>${right}</span>`;
+  const rem = Math.max(0, streakNeeded - p.streak);
+  document.getElementById('streak-to-next').textContent = lang === 'en'
+    ? `${rem} more correct in a row to level up · Streak: ${p.streak}/${streakNeeded}`
+    : `再连续答对 ${rem} 题升级 · 连续答对: ${p.streak}/${streakNeeded}`;
+}
+
+function updateStats() {
+  document.getElementById('s-attempted').textContent = sessionAttempted;
+  document.getElementById('s-correct').textContent = sessionCorrect;
+  const acc = sessionAttempted ? Math.round(sessionCorrect/sessionAttempted*100)+'%' : '—';
+  document.getElementById('s-acc').textContent = acc;
+}
+
+// ══════════════════════════════════════
+// ANSWER HANDLING
+// ══════════════════════════════════════
+function submitAnswer() {
+  if (answered || animating) return;
+  const val = document.getElementById('answer-input').value.trim();
+  if (val === '' || val === null) { toast(lang==='en'?'Enter an answer · 请输入答案':'请输入答案'); return; }
+  const userAns = parseInt(val);
+  if (isNaN(userAns)) { toast(lang==='en'?'Numbers only · 请输入数字':'请输入数字'); return; }
+
+  answered = true;
+  const correct = userAns === currentQ.answer;
+  const p = appData.profiles[currentProfile];
+
+  // Track overall accuracy
+  if (!p.accuracy[currentQ.type.id]) p.accuracy[currentQ.type.id] = { a:0, c:0 };
+  p.accuracy[currentQ.type.id].a++;
+  if (correct) p.accuracy[currentQ.type.id].c++;
+  p.totalAttempted++;
+  if (correct) p.totalCorrect++;
+  // Track wrong answers (last 100 per type)
+  if (!correct) {
+    if (!p.wrongAnswers) p.wrongAnswers = {};
+    if (!p.wrongAnswers[currentQ.type.id]) p.wrongAnswers[currentQ.type.id] = [];
+    const aStr = currentQ.a < 0 ? `(${currentQ.a})` : String(currentQ.a);
+    const bStr = currentQ.displayB || (currentQ.b < 0 ? `(${currentQ.b})` : String(currentQ.b));
+    p.wrongAnswers[currentQ.type.id].unshift({
+      q: `${aStr} ${currentQ.op} ${bStr}`,
+      correct: currentQ.answer,
+      given: userAns,
+      level: p.level,
+      date: new Date().toISOString()
+    });
+    // cap at 100 per type
+    if (p.wrongAnswers[currentQ.type.id].length > 100) {
+      p.wrongAnswers[currentQ.type.id] = p.wrongAnswers[currentQ.type.id].slice(0, 100);
+    }
+  }
+  // Track accuracy by level
+  if (!p.accuracyByLevel) p.accuracyByLevel = {};
+  const lvlKey = String(getTypeLevel(p, currentQ.type.id));
+  if (!p.accuracyByLevel[lvlKey]) p.accuracyByLevel[lvlKey] = {};
+  if (!p.accuracyByLevel[lvlKey][currentQ.type.id]) p.accuracyByLevel[lvlKey][currentQ.type.id] = { a:0, c:0 };
+  p.accuracyByLevel[lvlKey][currentQ.type.id].a++;
+  if (correct) p.accuracyByLevel[lvlKey][currentQ.type.id].c++;
+  sessionAttempted++;
+
+  // Per-type streak
+  if (!p.typeStreaks) p.typeStreaks = {};
+  if (!p.typeLevels) { p.typeLevels = {}; Q_TYPES.forEach(t => p.typeLevels[t.id] = 1); }
+  if (correct) {
+    sessionCorrect++;
+    p.typeStreaks[currentQ.type.id] = (p.typeStreaks[currentQ.type.id] || 0) + 1;
+  } else {
+    p.typeStreaks[currentQ.type.id] = 0;
+  }
+
+  const streakNeeded = p.streakNeeded || appData.settings.streakNeeded;
+
+  // Feedback
+  const fb = document.getElementById('feedback-box');
+  if (correct) {
+    const msgs = lang === 'en'
+      ? ['Correct! ✓', 'Well done! ✓', 'Perfect! ✓', 'Excellent! ✓']
+      : ['正确！✓', '很好！✓', '完美！✓', '棒极了！✓'];
+    const zhMsgs = ['正确！', '很好！', '完美！', '棒极了！'];
+    const idx = Math.floor(Math.random()*msgs.length);
+    fb.className = 'correct';
+    fb.innerHTML = msgs[idx] + (lang==='en' ? `<span id="feedback-zh">${zhMsgs[idx]}</span>` : '');
+  } else {
+    fb.className = 'wrong';
+    const wrongEn = `✗ Not quite. The answer is <strong>${currentQ.answer}</strong>`;
+    const wrongZh = `答案是 <strong>${currentQ.answer}</strong>`;
+    fb.innerHTML = (lang==='en' ? wrongEn : wrongZh) + `<span id="feedback-zh">${lang==='en' ? wrongZh : wrongEn}</span>`;
+    // show animation for wrong answer
+    if (currentQ.mode <= 2) {
+      animateNumberLine(currentQ.a, currentQ.b, currentQ.answer, currentQ.range, true);
+    } else {
+      // mode 3: reveal number line and animate
+      document.getElementById('numberline-container').classList.add('visible');
+      setupNumberLine();
+      setTimeout(() => animateNumberLine(currentQ.a, currentQ.b, currentQ.answer, currentQ.range, true), 300);
+    }
+  }
+
+  document.getElementById('answer-input').disabled = true;
+  document.getElementById('submit-btn').style.display = 'none';
+  document.getElementById('nl-arrow-controls').classList.remove('visible');
+  document.getElementById('nl-arrows-label').classList.remove('visible');
+  document.getElementById('next-btn').classList.add('visible');
+
+  saveData();
+  updateStats();
+
+  // Check per-type level up
+  const typeStreak = p.typeStreaks[currentQ.type.id] || 0;
+  const typeLevel = getTypeLevel(p, currentQ.type.id);
+  if (typeStreak >= streakNeeded && typeLevel < 10) {
+    setTimeout(() => triggerTypeLevelUp(currentQ.type), correct ? 600 : 2500);
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !answered) submitAnswer();
+  else if (e.key === 'Enter' && answered) nextQuestion();
+});
+
+function nextQuestion() {
+  generateQuestion();
+}
+
+
+// ══════════════════════════════════════
+// NUMBER LINE ARROW CONTROLS
+// ══════════════════════════════════════
+let nlArrowVal = null;
+let arrowHoldTimer = null;
+let arrowHoldInterval = null;
+
+function shouldShowArrows() {
+  if (!currentQ) return true;
+  const p = appData.profiles[currentProfile];
+  const streakNeeded = p.streakNeeded || appData.settings.streakNeeded;
+  const typeStreak = getTypeStreak(p, currentQ.type.id);
+  return typeStreak < Math.floor(streakNeeded / 2);
+}
+
+function showArrowControls() {
+  const show = shouldShowArrows() && !answered;
+  const controls = document.getElementById('nl-arrow-controls');
+  const label = document.getElementById('nl-arrows-label');
+  if (!controls) return;
+  if (show) {
+    controls.classList.add('visible');
+    label.classList.add('visible');
+    label.textContent = lang==='en'
+      ? 'Tap ← → to move one step · 点击箭头移动一步'
+      : '点击箭头移动一步 · Tap ← → to move one step';
+    nlArrowVal = currentQ ? currentQ.a : 0;
+    document.getElementById('nl-arrow-val').textContent = nlArrowVal;
+  } else {
+    controls.classList.remove('visible');
+    label.classList.remove('visible');
+  }
+}
+
+function moveArrow(dir) {
+  if (answered || !currentQ) return;
+  const autoRange = Math.ceil(Math.max(Math.abs(currentQ.a), Math.abs(currentQ.answer), currentQ.range) / 5) * 5;
+  nlArrowVal = Math.max(-autoRange, Math.min(autoRange, (nlArrowVal ?? currentQ.a) + dir));
+  document.getElementById('nl-arrow-val').textContent = nlArrowVal;
+  const canvas = document.getElementById('nl-canvas');
+  const dpr = window.devicePixelRatio;
+  const w = canvas.width, h = canvas.height;
+  const min = -autoRange, max = autoRange;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,w,h);
+  const { pad, lineY, lineW, steps } = drawNumberLineBase(ctx, min, max, w, h, dpr);
+  const startX = pad + ((currentQ.a - min) / steps) * lineW;
+  const curX = pad + ((nlArrowVal - min) / steps) * lineW;
+  const positive = curX >= startX;
+  ctx.strokeStyle = positive ? '#4ade80' : '#ff6b6b';
+  ctx.lineWidth = 2*dpr; ctx.setLineDash([4*dpr,3*dpr]);
+  const arcH = Math.abs(curX-startX)*0.4;
+  if (Math.abs(curX-startX) > 2) {
+    ctx.beginPath();
+    ctx.moveTo(startX, lineY);
+    ctx.quadraticCurveTo((startX+curX)/2, lineY - Math.max(arcH,8*dpr), curX, lineY);
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#5b8cff';
+  ctx.beginPath(); ctx.arc(startX, lineY, 7*dpr, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#5b8cff'; ctx.font = `bold ${11*dpr}px DM Sans`; ctx.textAlign = 'center';
+  ctx.fillText(currentQ.a, startX, lineY - 14*dpr);
+  ctx.fillStyle = '#fff';
+  ctx.beginPath(); ctx.arc(curX, lineY, 9*dpr, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = positive ? '#4ade80' : '#ff6b6b'; ctx.lineWidth = 2*dpr; ctx.stroke();
+  ctx.fillStyle = '#fff'; ctx.font = `bold ${12*dpr}px DM Sans`;
+  ctx.fillText(nlArrowVal, curX, lineY - 18*dpr);
+  document.getElementById('nl-instruction').textContent = lang==='en'
+    ? `Working: ${currentQ.a} → ${nlArrowVal}`
+    : `正在计算：${currentQ.a} → ${nlArrowVal}`;
+}
+
+function startArrowHold(dir) {
+  moveArrow(dir);
+  arrowHoldTimer = setTimeout(() => {
+    arrowHoldInterval = setInterval(() => moveArrow(dir), 120);
+  }, 400);
+}
+
+function stopArrowHold() {
+  clearTimeout(arrowHoldTimer);
+  clearInterval(arrowHoldInterval);
+}
+
+// ── Tutorial arrow controls ──
+let tutArrowVal = null;
+let tutArrowHoldTimer = null;
+let tutArrowHoldInterval = null;
+
+function shouldShowTutArrows() {
+  const p = appData.profiles[currentProfile];
+  const streakNeeded = p.streakNeeded || appData.settings.streakNeeded;
+  return true; // always show in tutorial
+}
+
+function showTutArrowControls() {
+  const show = shouldShowTutArrows() && !tutAnswered && tutCurrentQ;
+  const controls = document.getElementById('tut-arrow-controls');
+  if (!controls) return;
+  if (show) {
+    controls.classList.add('visible');
+    tutArrowVal = tutCurrentQ ? tutCurrentQ.a : 0;
+    document.getElementById('tut-arrow-val').textContent = tutArrowVal;
+  } else {
+    controls.classList.remove('visible');
+  }
+}
+
+function moveTutArrow(dir) {
+  if (tutAnswered || !tutCurrentQ) return;
+  const tutAutoRange = Math.ceil(Math.max(Math.abs(tutCurrentQ.a), Math.abs(tutCurrentQ.answer || 0), 5) / 5) * 5;
+  tutArrowVal = Math.max(-tutAutoRange, Math.min(tutAutoRange, (tutArrowVal ?? tutCurrentQ.a) + dir));
+  document.getElementById('tut-arrow-val').textContent = tutArrowVal;
+  const canvas = document.getElementById('tut-practice-nl');
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio;
+  const w = canvas.width, h = canvas.height;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,w,h);
+  const tMin = -tutAutoRange, tMax = tutAutoRange;
+  const { pad, lineY, lineW } = drawNumberLineBase(ctx, tMin, tMax, w, h, dpr);
+  const startX = pad + ((tutCurrentQ.a - tMin) / (tMax - tMin)) * lineW;
+  const curX = pad + ((tutArrowVal - tMin) / (tMax - tMin)) * lineW;
+  const positive = curX >= startX;
+  ctx.strokeStyle = positive ? '#4ade80' : '#ff6b6b';
+  ctx.lineWidth = 2*dpr; ctx.setLineDash([4*dpr,3*dpr]);
+  const arcH = Math.abs(curX-startX)*0.4;
+  if (Math.abs(curX-startX) > 2) {
+    ctx.beginPath();
+    ctx.moveTo(startX, lineY);
+    ctx.quadraticCurveTo((startX+curX)/2, lineY - Math.max(arcH,8*dpr), curX, lineY);
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#5b8cff';
+  ctx.beginPath(); ctx.arc(startX, lineY, 7*dpr, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#5b8cff'; ctx.font = `bold ${11*dpr}px DM Sans`; ctx.textAlign = 'center';
+  ctx.fillText(tutCurrentQ.a, startX, lineY - 14*dpr);
+  ctx.fillStyle = '#fff';
+  ctx.beginPath(); ctx.arc(curX, lineY, 9*dpr, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = positive ? '#4ade80' : '#ff6b6b'; ctx.lineWidth = 2*dpr; ctx.stroke();
+  ctx.fillStyle = '#fff'; ctx.font = `bold ${12*dpr}px DM Sans`;
+  ctx.fillText(tutArrowVal, curX, lineY - 18*dpr);
+  document.getElementById('tut-practice-nl-label').textContent = lang==='en'
+    ? `Working: ${tutCurrentQ.a} → ${tutArrowVal} · 正在计算：${tutCurrentQ.a} → ${tutArrowVal}`
+    : `正在计算：${tutCurrentQ.a} → ${tutArrowVal} · Working: ${tutCurrentQ.a} → ${tutArrowVal}`;
+}
+
+function startTutArrowHold(dir) {
+  moveTutArrow(dir);
+  tutArrowHoldTimer = setTimeout(() => {
+    tutArrowHoldInterval = setInterval(() => moveTutArrow(dir), 120);
+  }, 400);
+}
+
+function stopTutArrowHold() {
+  clearTimeout(tutArrowHoldTimer);
+  clearInterval(tutArrowHoldInterval);
+}
+
+// ── Main game number line drag ──
+let mainNLDragging = false;
+let mainNLDragVal = null;
+
+function initMainNLDrag() {
+  const canvas = document.getElementById('nl-canvas');
+  if (!canvas) return;
+  canvas.style.cursor = 'grab';
+  canvas.onmousedown = mainNLStartDrag;
+  canvas.ontouchstart = mainNLStartDrag;
+}
+
+function mainNLStartDrag(e) {
+  if (answered) return;
+  mainNLDragging = true;
+  const canvas = document.getElementById('nl-canvas');
+
+  const moveFn = (ev) => {
+    if (!mainNLDragging || !currentQ) return;
+    const rect = canvas.getBoundingClientRect();
+    const clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
+    const dpr = window.devicePixelRatio;
+    const dragX = (clientX - rect.left) * dpr;
+    const w = canvas.width, h = canvas.height;
+    const autoRange = Math.ceil(Math.max(Math.abs(currentQ.a), Math.abs(currentQ.answer), currentQ.range) / 5) * 5;
+    const min = -autoRange, max = autoRange;
+    const range = max - min;
+    const pad = 40 * dpr;
+    const lineW = w - pad*2;
+    const clampedX = Math.max(pad, Math.min(w - pad, dragX));
+    const dragFrac = (clampedX - pad) / lineW;
+    mainNLDragVal = Math.round(min + dragFrac * range);
+
+    // redraw with drag overlay
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,w,h);
+    const { lineY } = drawNumberLineBase(ctx, min, max, w, h, dpr);
+    const startX = pad + ((currentQ.a - min) / range) * lineW;
+
+    // arc
+    const positive = clampedX >= startX;
+    ctx.strokeStyle = positive ? '#4ade80' : '#ff6b6b';
+    ctx.lineWidth = 2*dpr;
+    ctx.setLineDash([4*dpr, 3*dpr]);
+    const arcH = Math.abs(clampedX - startX) * 0.4;
+    ctx.beginPath();
+    ctx.moveTo(startX, lineY);
+    ctx.quadraticCurveTo((startX+clampedX)/2, lineY - Math.max(arcH, 8*dpr), clampedX, lineY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // start dot
+    ctx.fillStyle = '#5b8cff';
+    ctx.beginPath(); ctx.arc(startX, lineY, 7*dpr, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#5b8cff';
+    ctx.font = `bold ${11*dpr}px DM Sans`;
+    ctx.textAlign = 'center';
+    ctx.fillText(currentQ.a, startX, lineY - 14*dpr);
+
+    // drag dot
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.arc(clampedX, lineY, 9*dpr, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = positive ? '#4ade80' : '#ff6b6b';
+    ctx.lineWidth = 2*dpr; ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = `bold ${12*dpr}px DM Sans`;
+    ctx.fillText(mainNLDragVal, clampedX, lineY - 18*dpr);
+
+    document.getElementById('nl-instruction').innerHTML = lang==='en'
+      ? `Working: ${currentQ.a} → <strong>${mainNLDragVal}</strong> · 正在计算：${currentQ.a} → <strong>${mainNLDragVal}</strong>`
+      : `正在计算：${currentQ.a} → <strong>${mainNLDragVal}</strong> · Working: ${currentQ.a} → <strong>${mainNLDragVal}</strong>`;
+  };
+
+  const endFn = () => {
+    mainNLDragging = false;
+    document.removeEventListener('mousemove', moveFn);
+    document.removeEventListener('mouseup', endFn);
+    document.removeEventListener('touchmove', moveFn);
+    document.removeEventListener('touchend', endFn);
+    // drag released — do not auto-fill answer
+  };
+
+  document.addEventListener('mousemove', moveFn);
+  document.addEventListener('mouseup', endFn);
+  document.addEventListener('touchmove', moveFn, { passive: true });
+  document.addEventListener('touchend', endFn);
+  moveFn(e);
+}
+
+// ══════════════════════════════════════
+// NUMBER LINE
+// ══════════════════════════════════════
+function getCanvas() { return document.getElementById('nl-canvas'); }
+
+function setupNumberLine() {
+  const canvas = getCanvas();
+  const wrap = document.getElementById('nl-canvas-wrap');
+  canvas.width = wrap.clientWidth * window.devicePixelRatio;
+  canvas.height = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--number-line-h')) * window.devicePixelRatio;
+  canvas.style.width = wrap.clientWidth + 'px';
+  canvas.style.height = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--number-line-h')) + 'px';
+
+  const nlLabel = document.getElementById('nl-label');
+  nlLabel.textContent = lang === 'en'
+    ? 'Number line · Start from the first number, then move right (+) or left (−)'
+    : '数轴 · 从第一个数出发，向右移动（+）或向左移动（−）';
+}
+
+function clearCanvas() {
+  const canvas = getCanvas();
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function drawNumberLineBase(ctx, min, max, w, h, dpr) {
+  const pad = 40 * dpr;
+  const lineY = h * 0.55;
+  const lineW = w - pad*2;
+  const steps = max - min;
+
+  ctx.strokeStyle = '#2e3348';
+  ctx.lineWidth = 2 * dpr;
+  ctx.beginPath();
+  ctx.moveTo(pad, lineY); ctx.lineTo(w - pad, lineY);
+  ctx.stroke();
+
+  // ticks & labels
+  ctx.fillStyle = '#5c6480';
+  ctx.font = `${10*dpr}px DM Sans, sans-serif`;
+  ctx.textAlign = 'center';
+  for (let i = min; i <= max; i++) {
+    const x = pad + ((i - min) / steps) * lineW;
+    ctx.beginPath();
+    ctx.strokeStyle = i === 0 ? '#9ba3bf' : '#2e3348';
+    ctx.lineWidth = (i === 0 ? 2 : 1) * dpr;
+    ctx.moveTo(x, lineY - 6*dpr); ctx.lineTo(x, lineY + 6*dpr);
+    ctx.stroke();
+    // only label every N ticks depending on range
+    const labelEvery = steps <= 20 ? 1 : steps <= 40 ? 2 : steps <= 60 ? 5 : 10;
+    if (i % labelEvery === 0) {
+      ctx.fillStyle = i === 0 ? '#9ba3bf' : '#5c6480';
+      ctx.fillText(i, x, lineY + 20*dpr);
+    }
+  }
+  return { pad, lineY, lineW, steps };
+}
+
+function drawNumberLineStatic(startVal, range) {
+  const canvas = getCanvas();
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio;
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+
+  const autoRange = Math.ceil(Math.max(Math.abs(startVal), range) / 5) * 5;
+  const min = -autoRange, max = autoRange;
+  const { pad, lineY, lineW, steps } = drawNumberLineBase(ctx, min, max, w, h, dpr);
+
+  // mark start
+  const startX = pad + ((startVal - min) / steps) * lineW;
+  ctx.fillStyle = '#5b8cff';
+  ctx.beginPath();
+  ctx.arc(startX, lineY, 7*dpr, 0, Math.PI*2);
+  ctx.fill();
+
+  document.getElementById('nl-instruction').innerHTML = lang === 'en'
+    ? `Start at <strong>${startVal}</strong>. Now add or subtract. <span class="zh">从 <strong>${startVal}</strong> 出发，然后加减。</span>`
+    : `从 <strong>${startVal}</strong> 出发，然后加减。<span class="zh">Start at <strong>${startVal}</strong>.</span>`;
+}
+
+function animateNumberLine(startVal, change, endVal, range, fast) {
+  animating = true;
+  const canvas = getCanvas();
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio;
+  const w = canvas.width, h = canvas.height;
+  // Auto-fit range to always include both start and end
+  const maxVal = Math.ceil(Math.max(Math.abs(startVal), Math.abs(endVal), range) / 5) * 5;
+  const min = -maxVal, max = maxVal;
+
+  const totalFrames = fast ? 30 : 60;
+  let frame = 0;
+
+  function drawFrame() {
+    ctx.clearRect(0,0,w,h);
+    const { pad, lineY, lineW, steps } = drawNumberLineBase(ctx, min, max, w, h, dpr);
+    const startX = pad + ((startVal - min) / steps) * lineW;
+    const endX = pad + ((endVal - min) / steps) * lineW;
+    const curLineY = lineY;
+
+    const prog = Math.min(frame / totalFrames, 1);
+    const ease = 1 - Math.pow(1 - prog, 3);
+    const curX = startX + (endX - startX) * ease;
+
+    // arc arrow
+    ctx.strokeStyle = change >= 0 ? '#4ade80' : '#ff6b6b';
+    ctx.lineWidth = 2.5 * dpr;
+    ctx.setLineDash([]);
+    const arcH = Math.abs(endX - startX) * 0.35;
+    ctx.beginPath();
+    ctx.moveTo(startX, curLineY);
+    ctx.quadraticCurveTo((startX+curX)/2, curLineY - arcH, curX, curLineY);
+    ctx.stroke();
+
+    // arrowhead
+    if (prog > 0.85) {
+      const dir = endX > startX ? 1 : -1;
+      ctx.fillStyle = change >= 0 ? '#4ade80' : '#ff6b6b';
+      ctx.beginPath();
+      ctx.moveTo(curX, curLineY);
+      ctx.lineTo(curX - dir*8*dpr, curLineY - 5*dpr);
+      ctx.lineTo(curX - dir*8*dpr, curLineY + 5*dpr);
+      ctx.fill();
+    }
+
+    // start dot
+    ctx.fillStyle = '#5b8cff';
+    ctx.beginPath(); ctx.arc(startX, curLineY, 7*dpr, 0, Math.PI*2); ctx.fill();
+
+    // moving dot
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(curX, curLineY, 6*dpr, 0, Math.PI*2); ctx.fill();
+
+    // start label above
+    ctx.fillStyle = '#5b8cff';
+    ctx.font = `bold ${11*dpr}px DM Sans`;
+    ctx.textAlign = 'center';
+    ctx.fillText(startVal, startX, curLineY - 16*dpr);
+
+    if (prog >= 1) {
+      // end dot and label
+      ctx.fillStyle = endVal === startVal ? '#ffb347' : (change >= 0 ? '#4ade80' : '#ff6b6b');
+      ctx.beginPath(); ctx.arc(endX, curLineY, 8*dpr, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = `bold ${12*dpr}px DM Sans`;
+      ctx.fillText(endVal, endX, curLineY - 18*dpr);
+      animating = false;
+
+      document.getElementById('nl-instruction').innerHTML = lang === 'en'
+        ? `Started at <strong>${startVal}</strong>, moved <strong>${change > 0 ? '+' : ''}${change}</strong>, landed on <strong>${endVal}</strong>. <span class="zh">从 <strong>${startVal}</strong> 出发，移动了 <strong>${change > 0 ? '+' : ''}${change}</strong>，到达 <strong>${endVal}</strong>。</span>`
+        : `从 <strong>${startVal}</strong> 出发，移动了 <strong>${change > 0 ? '+' : ''}${change}</strong>，到达 <strong>${endVal}</strong>。<span class="zh">Started at <strong>${startVal}</strong>, moved <strong>${change > 0 ? '+' : ''}${change}</strong>, landed on <strong>${endVal}</strong>.</span>`;
+      return;
+    }
+    frame++;
+    requestAnimationFrame(drawFrame);
+  }
+  requestAnimationFrame(drawFrame);
+}
+
+// ══════════════════════════════════════
+// LEVEL UP
+// ══════════════════════════════════════
+function triggerTypeLevelUp(type) {
+  const p = appData.profiles[currentProfile];
+  if (!p.typeLevels) p.typeLevels = {};
+  const oldLevel = p.typeLevels[type.id] || 1;
+  const newLevel = Math.min(oldLevel + 1, 10);
+  p.typeLevels[type.id] = newLevel;
+  p.typeStreaks[type.id] = 0;
+  p.levelHistory.push({ typeId: type.id, typeEn: type.en, level: newLevel, date: new Date().toISOString() });
+  saveData();
+
+  const modeChange = getMode(oldLevel) !== getMode(newLevel);
+  const modeMsg = modeChange ? (lang==='en' ? ' The number line support will change.' : ' 数轴支持方式将改变。') : '';
+
+  document.getElementById('levelup-title').textContent = lang==='en'
+    ? `Level up! · 升级了！` : `升级了！· Level up!`;
+  document.getElementById('levelup-msg').textContent = lang==='en'
+    ? `${type.en}: Level ${oldLevel} → Level ${newLevel}! Numbers now up to ±${getRange(newLevel)}.${modeMsg}`
+    : `${type.zh}：第${oldLevel}级 → 第${newLevel}级！数字范围扩大到 ±${getRange(newLevel)}。${modeMsg}`;
+  document.getElementById('levelup-msg-zh').textContent = lang==='en'
+    ? `${type.zh}：第${oldLevel}级 → 第${newLevel}级！`
+    : `${type.en}: Level ${oldLevel} → Level ${newLevel}!`;
+  document.getElementById('levelup-overlay').classList.add('active');
+}
+
+function dismissLevelUp() {
+  document.getElementById('levelup-overlay').classList.remove('active');
+  generateQuestion();
+}
+
+// ══════════════════════════════════════
+// STATS SCREEN
+// ══════════════════════════════════════
+function showStats() {
+  const p = appData.profiles[currentProfile];
+  const acc = p.totalAttempted ? Math.round(p.totalCorrect/p.totalAttempted*100) : null;
+
+  document.getElementById('stats-overview').innerHTML = `
+    <div class="ov-box"><div class="ov-num">${p.totalAttempted}</div><div class="ov-lbl">Total<span class="zh">总题数</span></div></div>
+    <div class="ov-box"><div class="ov-num">${acc !== null ? acc+'%' : '—'}</div><div class="ov-lbl">Accuracy<span class="zh">正确率</span></div></div>
+    <div class="ov-box"><div class="ov-num">${sessionAttempted}</div><div class="ov-lbl">This session<span class="zh">本次</span></div></div>
+  `;
+
+  const breakdown = document.getElementById('type-breakdown');
+  const abl = p.accuracyByLevel || {};
+  breakdown.innerHTML = Q_TYPES.map(t => {
+    const a = p.accuracy[t.id];
+    const pct = a && a.a ? Math.round(a.c/a.a*100) : null;
+    const color = pct===null?'var(--text3)':pct>=80?'var(--green)':pct>=50?'var(--amber)':'var(--red)';
+    // per-level chips
+    const levelChips = Object.keys(abl).sort((x,y)=>parseInt(x)-parseInt(y)).map(lvl => {
+      const la = abl[lvl][t.id];
+      if (!la || !la.a) return '';
+      const lpct = Math.round(la.c/la.a*100);
+      const lcolor = lpct>=80?'var(--green)':lpct>=50?'var(--amber)':'var(--red)';
+      return `<span class="level-chip" style="color:${lcolor};border-color:${lcolor}">L${lvl}: ${lpct}%</span>`;
+    }).join('');
+    const typeLevel = (p.typeLevels||{})[t.id] || 1;
+    const wrongs = (p.wrongAnswers||{})[t.id] || [];
+    const wrongRows = wrongs.slice(0, 20).map(w => {
+      const d = new Date(w.date).toLocaleDateString('en-AU');
+      return `<div class="wrong-entry">
+        <span class="wrong-q">${esc(w.q)} = ?</span>
+        <span class="wrong-ans">✗ ${w.given}</span>
+        <span class="wrong-correct">✓ ${w.correct}</span>
+        <span class="wrong-level">L${w.level}</span>
+      </div>`;
+    }).join('');
+    const wrongCount = wrongs.length;
+    return `<div class="type-row" style="flex-wrap:wrap" id="type-row-${t.id}">
+      <div style="width:100%"><div class="type-label">${t.en} <span style="font-size:11px;color:var(--accent);font-weight:600">L${typeLevel}</span></div><div class="type-label-zh">${t.zh}</div></div>
+      <div class="type-bar-wrap"><div class="type-bar" style="width:${pct||0}%;background:${color}"></div></div>
+      <div class="type-pct" style="color:${color}">${pct!==null?pct+'%':'—'}</div>
+      <div class="type-tries">${a?a.a+' tries':'new'}</div>
+      ${levelChips ? `<div class="level-breakdown">${levelChips}</div>` : ''}
+      ${wrongCount > 0 ? `
+      <button class="type-row-expand" onclick="toggleWrongDetail('${t.id}')">
+        <span id="expand-icon-${t.id}">▶</span> ${wrongCount} wrong answer${wrongCount!==1?'s':''} · ${wrongCount}个错误答案
+      </button>
+      <div class="wrong-detail-panel" id="wrong-detail-${t.id}">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;display:flex;justify-content:space-between">
+          <span>Question · 题目</span><span>Your answer · 你的答案</span><span>Correct · 正确答案</span><span>Level · 级别</span>
+        </div>
+        ${wrongRows}
+        ${wrongCount > 20 ? `<div style="font-size:12px;color:var(--text3);padding-top:6px">Showing most recent 20 of ${wrongCount} · 显示最近20个</div>` : ''}
+      </div>` : ''}
+    </div>`;
+  }).join('');
+
+  const lh = document.getElementById('level-history');
+  if (!p.levelHistory.length) {
+    lh.innerHTML = `<div style="font-size:14px;color:var(--text2)">No level ups yet · 暂无升级记录</div>`;
+  } else {
+    lh.innerHTML = p.levelHistory.map(h => {
+      const d = new Date(h.date);
+      return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px">
+        <span>Reached Level ${h.level} · 达到第${h.level}级</span>
+        <span style="color:var(--text2)">${d.toLocaleDateString('en-AU')}</span>
+      </div>`;
+    }).reverse().join('');
+  }
+
+  showScreen('stats');
+}
+
+function toggleWrongDetail(typeId) {
+  const panel = document.getElementById('wrong-detail-'+typeId);
+  const icon = document.getElementById('expand-icon-'+typeId);
+  if (!panel) return;
+  const open = panel.classList.toggle('open');
+  if (icon) icon.textContent = open ? '▼' : '▶';
+}
+
+function confirmResetStats() {
+  if (!confirm('Reset all stats for this profile? · 确定要重置所有数据吗？')) return;
+  const p = appData.profiles[currentProfile];
+  Q_TYPES.forEach(t => { p.typeLevels[t.id] = 1; p.typeStreaks[t.id] = 0; });
+  p.accuracy = {}; p.accuracyByLevel = {}; p.wrongAnswers = {}; p.levelHistory = []; p.totalAttempted = 0; p.totalCorrect = 0;
+  sessionAttempted = 0; sessionCorrect = 0;
+  saveData();
+  toast('Stats reset · 数据已重置');
+  showStats();
+}
+
+function showGame() { showScreen('game'); if (currentProfile) { updateProgress(); updateStats(); } }
+
+// ══════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════
+function openSettingsEntry() {
+  document.getElementById('pin-input-settings').value = '';
+  document.getElementById('pin-modal').classList.add('open');
+  setTimeout(() => document.getElementById('pin-input-settings').focus(), 100);
+}
+function closePinModal() { document.getElementById('pin-modal').classList.remove('open'); }
+function checkSettingsPin() {
+  if (document.getElementById('pin-input-settings').value === settingsPin) {
+    closePinModal(); openSettingsModal();
+  }
+}
+function openSettingsModal() {
+  document.getElementById('setting-streak').value = appData.settings.streakNeeded;
+  document.getElementById('setting-new-pin').value = '';
+  const profiles = Object.keys(appData.profiles);
+  const profileOpts = profiles.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
+  document.getElementById('setting-delete-profile').innerHTML = profileOpts;
+  document.getElementById('setting-level-profile').innerHTML = profileOpts;
+  document.getElementById('setting-level-type').innerHTML =
+    '<option value="all">All types · 所有类型</option>' +
+    Q_TYPES.map(t=>`<option value="${t.id}">${t.en}</option>`).join('');
+  // set current level in selector
+  if (currentProfile && appData.profiles[currentProfile]) {
+    document.getElementById('setting-level-value').value = appData.profiles[currentProfile].level;
+    document.getElementById('setting-level-profile').value = currentProfile;
+  }
+  document.getElementById('settings-modal').classList.add('open');
+}
+function closeSettingsModal() { document.getElementById('settings-modal').classList.remove('open'); }
+function applyLevelChange() {
+  const name = document.getElementById('setting-level-profile').value;
+  const level = parseInt(document.getElementById('setting-level-value').value);
+  const typeId = document.getElementById('setting-level-type').value;
+  if (!name || !level) return;
+  const p = appData.profiles[name];
+  if (!p) return;
+  if (!p.typeLevels) { p.typeLevels = {}; Q_TYPES.forEach(t => p.typeLevels[t.id] = 1); }
+  if (!p.typeStreaks) { p.typeStreaks = {}; Q_TYPES.forEach(t => p.typeStreaks[t.id] = 0); }
+  if (typeId === 'all') {
+    Q_TYPES.forEach(t => { p.typeLevels[t.id] = level; p.typeStreaks[t.id] = 0; });
+    toast(`All types set to Level ${level} for ${name}`);
+  } else {
+    p.typeLevels[typeId] = level;
+    p.typeStreaks[typeId] = 0;
+    const typeName = Q_TYPES.find(t=>t.id===typeId)?.en || typeId;
+    toast(`${typeName} set to Level ${level}`);
+  }
+  saveData();
+}
+
+function saveSettings() {
+  const streak = parseInt(document.getElementById('setting-streak').value)||5;
+  appData.settings.streakNeeded = Math.max(3, Math.min(20, streak));
+  // apply to all profiles
+  Object.values(appData.profiles).forEach(p => p.streakNeeded = appData.settings.streakNeeded);
+  const newPin = document.getElementById('setting-new-pin').value.trim();
+  if (newPin.length >= 4) { appData.settings.pin = newPin; settingsPin = newPin; }
+  saveData();
+  closeSettingsModal();
+  updateProgress();
+  toast('Settings saved · 设置已保存');
+}
+function deleteSelectedProfile() {
+  const name = document.getElementById('setting-delete-profile').value;
+  if (!name) return;
+  if (!confirm(`Delete profile "${name}"? · 确定删除用户 "${name}"？`)) return;
+  delete appData.profiles[name];
+  if (currentProfile === name) { currentProfile = null; }
+  saveData();
+  closeSettingsModal();
+  if (!currentProfile) { showScreen('profile'); renderProfiles(); }
+  toast('Profile deleted · 用户已删除');
+}
+
+// ══════════════════════════════════════
+// SCREEN MANAGEMENT
+// ══════════════════════════════════════
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+}
+
+// ══════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+loadData();
+renderProfiles();
+</script>
+</body>
+</html>
