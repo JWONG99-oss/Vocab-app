@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>學 · Learning Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b12; --surface: #0e1220; --border: #1c2235;
+  --text: #e8eaf2; --text2: #7a82a0; --text3: #3d4460;
+  --c1: #5b8cff; --c2: #ff6b6b; --c3: #4ade80; --c4: #ffb347; --c5: #c084fc;
+  --c1g: rgba(91,140,255,0.12); --c2g: rgba(255,107,107,0.12); --c3g: rgba(74,222,128,0.12); --c4g: rgba(255,179,71,0.12); --c5g: rgba(192,132,252,0.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; overflow-x: hidden; }
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 0;
+  background-image: linear-gradient(rgba(91,140,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(91,140,255,0.03) 1px, transparent 1px);
+  background-size: 48px 48px; pointer-events: none;
+}
+.orb { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; }
+.orb-1 { width: 400px; height: 400px; background: rgba(91,140,255,0.08); top: -100px; right: -100px; }
+.orb-2 { width: 300px; height: 300px; background: rgba(255,107,107,0.06); bottom: 50px; left: -80px; }
+.orb-3 { width: 250px; height: 250px; background: rgba(74,222,128,0.05); top: 50%; right: 10%; }
+main {
+  position: relative; z-index: 1; min-height: 100dvh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 40px 24px 60px;
+}
+.hero { text-align: center; margin-bottom: 48px; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text3); border: 1px solid var(--border); border-radius: 100px;
+  padding: 6px 16px; margin-bottom: 24px;
+}
+.hero-char {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: clamp(64px, 14vw, 100px); font-weight: 700; line-height: 1;
+  background: linear-gradient(135deg, var(--c1) 0%, #a78bff 50%, var(--c2) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 16px; display: block;
+  background-size: 200% 200%;
+  animation: shimmer 4s ease-in-out infinite;
+}
+@keyframes shimmer { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+.hero-title { font-size: clamp(20px, 4vw, 28px); font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; }
+.hero-sub { font-size: 14px; color: var(--text2); font-weight: 300; font-family: 'Noto Sans SC', sans-serif; }
+.accent-line { width: 40px; height: 3px; border-radius: 2px; margin: 0 auto 36px; background: linear-gradient(90deg, var(--c1), #a78bff, var(--c2), var(--c3)); }
+.cards { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 480px; }
+.app-card {
+  position: relative; overflow: hidden; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: 22px 24px; cursor: pointer; text-decoration: none; color: inherit;
+  display: flex; align-items: center; gap: 18px;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  animation: cardIn 0.5s ease both;
+}
+.app-card:nth-child(1){animation-delay:0.05s} .app-card:nth-child(2){animation-delay:0.13s} .app-card:nth-child(3){animation-delay:0.21s} .app-card:nth-child(4){animation-delay:0.29s} .app-card:nth-child(5){animation-delay:0.37s}
+@keyframes cardIn { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+.app-card::before { content:''; position:absolute; inset:0; opacity:0; transition:opacity 0.2s; }
+.app-card-1::before{background:var(--c1g)} .app-card-2::before{background:var(--c2g)} .app-card-3::before{background:var(--c3g)} .app-card-4::before{background:var(--c4g)} .app-card-5::before{background:var(--c5g)}
+.app-card:hover { transform:translateY(-3px); box-shadow:0 12px 40px rgba(0,0,0,0.3); }
+.app-card-1:hover{border-color:var(--c1)} .app-card-2:hover{border-color:var(--c2)} .app-card-3:hover{border-color:var(--c3)} .app-card-4:hover{border-color:var(--c4)} .app-card-5:hover{border-color:var(--c5)}
+.app-card:hover::before{opacity:1} .app-card:active{transform:translateY(-1px)}
+.app-icon { width:54px; height:54px; border-radius:14px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:24px; position:relative; z-index:1; }
+.app-card-1 .app-icon{background:var(--c1g)} .app-card-2 .app-icon{background:var(--c2g)} .app-card-3 .app-icon{background:var(--c3g)} .app-card-4 .app-icon{background:var(--c4g)} .app-card-5 .app-icon{background:var(--c5g)}
+.app-info { flex:1; position:relative; z-index:1; }
+.app-name { font-size:17px; font-weight:700; margin-bottom:2px; }
+.app-name-zh { font-family:'Noto Sans SC',sans-serif; font-size:12px; margin-bottom:5px; }
+.app-card-1 .app-name-zh{color:var(--c1)} .app-card-2 .app-name-zh{color:var(--c2)} .app-card-3 .app-name-zh{color:var(--c3)} .app-card-4 .app-name-zh{color:var(--c4)} .app-card-5 .app-name-zh{color:var(--c5)}
+.app-desc { font-size:13px; color:var(--text2); line-height:1.5; font-weight:300; }
+.app-arrow { font-size:20px; color:var(--text3); position:relative; z-index:1; transition:transform 0.2s, color 0.2s; }
+.app-card:hover .app-arrow{transform:translateX(4px)}
+.app-card-1:hover .app-arrow{color:var(--c1)} .app-card-2:hover .app-arrow{color:var(--c2)} .app-card-3:hover .app-arrow{color:var(--c3)} .app-card-4:hover .app-arrow{color:var(--c4)} .app-card-5:hover .app-arrow{color:var(--c5)}
+.hub-footer { position:relative; z-index:1; margin-top:36px; text-align:center; font-size:12px; color:var(--text3); font-weight:300; }
+</style>
+</head>
+<body>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+<main>
+  <div class="hero">
+    <div class="hero-badge">Learning Hub</div>
+    <span class="hero-char">學</span>
+    <div class="hero-title">Maths Practice Suite</div>
+    <div class="hero-sub">数学练习套件</div>
+  </div>
+  <div class="accent-line"></div>
+  <div class="cards">
+    <a class="app-card app-card-1" href="vocab-app.html">
+      <div class="app-icon">📚</div>
+      <div class="app-info">
+        <div class="app-name">Vocabulary</div>
+        <div class="app-name-zh">词汇练习</div>
+        <div class="app-desc">Match maths terms with Chinese translations across topics and lesson sets</div>
+      </div>
+      <div class="app-arrow">→</div>
+    </a>
+    <a class="app-card app-card-2" href="integers-app.html">
+      <div class="app-icon">➕➖</div>
+      <div class="app-info">
+        <div class="app-name">Integers</div>
+        <div class="app-name-zh">整数练习</div>
+        <div class="app-desc">Add and subtract with positive and negative numbers using the number line</div>
+      </div>
+      <div class="app-arrow">→</div>
+    </a>
+    <a class="app-card app-card-3" href="times-tables-app.html">
+      <div class="app-icon">✖️</div>
+      <div class="app-info">
+        <div class="app-name">Times Tables</div>
+        <div class="app-name-zh">乘除法练习</div>
+        <div class="app-desc">Multiplication and division drills with timed mode and progress tracking</div>
+      </div>
+      <div class="app-arrow">→</div>
+    </a>
+    <a class="app-card app-card-4" href="solving-equations.html">
+      <div class="app-icon">🔢</div>
+      <div class="app-info">
+        <div class="app-name">Solving Equations</div>
+        <div class="app-name-zh">解方程</div>
+        <div class="app-desc">Practice one-step to bracket equations with timed mode and leaderboard</div>
+      </div>
+      <div class="app-arrow">→</div>
+    </a>
+    <a class="app-card app-card-5" href="algebra-app.html">
+      <div class="app-icon">𝑥²</div>
+      <div class="app-info">
+        <div class="app-name">Algebra</div>
+        <div class="app-name-zh">代数练习</div>
+        <div class="app-desc">Substitution and algebraic skills with timed mode and leaderboard</div>
+      </div>
+      <div class="app-arrow">→</div>
+    </a>
+  </div>
+  <div class="hub-footer">Tap a card to open · 点击卡片进入</div>
+</main>
+</body>
+</html>
